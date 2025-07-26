@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Locating Report - GROUNDSCAN</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .header img {
+            max-width: 150px; /* Adjust logo size as needed */
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ebf4ff;
+        }
+        input[type="text"], input[type="date"], input[type="time"], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus, select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.25);
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .add-button {
+            background-color: #4299e1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .add-button:hover {
+            background-color: #3182ce;
+        }
+        .remove-button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.875rem;
+        }
+        .remove-button:hover {
+            background-color: #c53030;
+        }
+        .service-entry, .photo-entry {
+            border: 1px solid #ebf4ff;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .report-output {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            white-space: pre-wrap; /* Preserve formatting for generated text */
+            word-wrap: break-word; /* Break long words */
+        }
+        .print-button {
+            background-color: #38a169;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 20px;
+            display: block; /* Make it a block element to center */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .print-button:hover {
+            background-color: #2f855a;
+        }
+        .disclaimer-box {
+            background-color: #fffbeb; /* Light yellow background */
+            border: 1px solid #fbd38d; /* Yellow border */
+            color: #9c4221; /* Darker orange/brown text */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+        .disclaimer-box strong {
+            color: #d69e2e; /* Even darker yellow for emphasis */
+        }
+        .color-legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+            border: 1px solid #ccc; /* Add a light border for visibility */
+        }
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .report-output {
+                border: none;
+                background-color: #ffffff;
+                padding: 0;
+                margin-top: 0;
+            }
+            input, textarea, select, button {
+                border: none !important;
+                box-shadow: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .form-group label {
+                font-weight: normal;
+                color: #000;
+            }
+            .service-entry, .photo-entry {
+                border: none;
+                background-color: #ffffff;
+                padding: 0;
+                margin-bottom: 8px;
+            }
+            .header {
+                border-bottom: 1px solid #000;
+            }
+            h1, h2, h3 {
+                color: #000 !important;
+            }
+            .disclaimer-box {
+                background-color: #ffffff;
+                border: 1px solid #000;
+                color: #000;
+                box-shadow: none;
+            }
+            .disclaimer-box strong {
+                color: #000 !important;
+            }
+            .color-box {
+                border: 1px solid #000;
+            }
+            /* Ensure images are visible in print */
+            .report-output img {
+                display: block;
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Company Logo Placeholder -->
+            <!-- To add your logo:
+                 1. Place your logo image file (e.g., 'groundscan_logo.png') in the SAME folder as this HTML file.
+                 2. Change the 'src' attribute below to your logo's filename.
+                 Alternatively, you can use a direct URL if your logo is hosted online.
+            -->
+            <img id="companyLogo" src="groundscan_logo.png" alt="GROUNDSCAN Logo">
+            <h1 class="text-3xl font-bold text-gray-800">Utility Locating Report</h1>
+            <p class="text-gray-600">Comprehensive Site Assessment</p>
+            <div class="text-gray-700 mt-4">
+                <input type="text" id="companyName" class="text-center text-lg font-semibold mb-1" value="GROUNDSCAN" placeholder="Your Company Name (e.g., GROUNDSCAN)">
+                <input type="text" id="companyABN" class="text-center text-sm mb-1" placeholder="ABN: XX XXX XXX XXX">
+                <input type="text" id="companyContact" class="text-center text-sm" placeholder="Phone: XXXX XXX XXX | Email: info@yourcompany.com">
+            </div>
+        </div>
+
+        <div class="no-print">
+            <div class="disclaimer-box">
+                <p>The following report is an accumulation of information gathered from in-field investigations at the time of the report and any changes of assets in the field cannot be accounted for. It is recommended that services be potholed for confirmation prior to any construction or excavations and a Quality Level A be achieved. This report does not replace the need for valid Dial Before You Dig (DBYD) plans to be always on site.</p>
+            </div>
+
+            <h2 class="section-title">Project & Site Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="projectName">Project Name:</label>
+                    <input type="text" id="projectName" placeholder="e.g., Forestry NSW - Blue Gum Plantation">
+                </div>
+                <div class="form-group">
+                    <label for="clientName">Client Name:</label>
+                    <input type="text" id="clientName" placeholder="e.g., Forestry NSW">
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="siteAddress">Site Address/Location:</label>
+                    <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123, Forest Road, Rockley NSW"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reportDate">Report Date:</label>
+                    <input type="date" id="reportDate">
+                </div>
+                <div class="form-group">
+                    <label for="locatingDate">Locating Date(s):</label>
+                    <input type="date" id="locatingDate">
+                </div>
+                <div class="form-group">
+                    <label for="locatorName">Locator Name:</label>
+                    <input type="text" id="locatorName" placeholder="e.g., Zane Smith">
+                </div>
+                <div class="form-group">
+                    <label for="equipmentUsed">Equipment Used:</label>
+                    <input type="text" id="equipmentUsed" placeholder="e.g., Eos Arrow Gold, RD8200, GPR">
+                </div>
+                <div class="form-group">
+                    <label for="accuracyAchieved">Accuracy Achieved:</label>
+                    <input type="text" id="accuracyAchieved" placeholder="e.g., +/- 2cm (RTK Fixed)">
+                </div>
+                <div class="form-group">
+                    <label for="dbydPlansProvided">DBYD Plans Provided?</label>
+                    <select id="dbydPlansProvided">
+                        <option value="N/A">N/A</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dbydRefNumbers">DBYD Reference Number(s):</label>
+                    <input type="text" id="dbydRefNumbers" placeholder="e.g., 1234567890">
+                </div>
+                <div class="form-group">
+                    <label for="sitePlansProvided">Site Specific Plans Provided?</label>
+                    <select id="sitePlansProvided">
+                        <option value="N/A">N/A</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sitePlansNotes">Site Plans Notes (e.g., "No site service plans provided"):</label>
+                    <input type="text" id="sitePlansNotes" placeholder="e.g., No site service plans provided">
+                </div>
+            </div>
+
+            <h2 class="section-title">Quality Levels Explained (AS 5488-2019)</h2>
+            <div class="mb-6 text-gray-700">
+                <p class="mb-2"><strong>QUALITY LEVEL A (QLA):</strong> Visualization/Confirmation of a service, position, and depth, by non-destructive digging methods or points of entry to pits or manholes. Recommended Quality Level prior to construction or excavation.</p>
+                <p class="mb-2"><strong>QUALITY LEVEL B (QLB):</strong> Locating of services using radio detection methods. Acceptable range of accuracy for Quality Level B is +/-300mm for position and +/-500mm for depth.</p>
+                <p class="mb-2"><strong>QUALITY LEVEL C (QLC):</strong> Services marked out using only surface features in the field. Surface features include hydrants, gas markers, pits etc. No indication of service location or depth can be attained from Quality Level C.</p>
+                <p class="mb-2"><strong>QUALITY LEVEL D (QLD):</strong> Services marked out using DBYD plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.</p>
+            </div>
+
+            <h2 class="section-title">Marking Colour Legend (AS 5488-2019)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6 text-gray-700">
+                <div class="color-legend-item"><div class="color-box" style="background-color: #FFC0CB;"></div>PINK - GPR/UNKNOWN SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #FFFFFF; border-color: #333;"></div>WHITE - COMMUNICATION SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #FFA500;"></div>ORANGE - ELECTRICAL SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #0000FF;"></div>BLUE - WATER SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #FFFF00; border-color: #333;"></div>YELLOW - GAS SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #008000;"></div>GREEN - STORMWATER SERVICE</div>
+                <div class="color-legend-item"><div class="color-box" style="background-color: #800080;"></div>PURPLE - SEWER SERVICE</div>
+                 <div class="color-legend-item"><div class="color-box" style="background-color: #A52A2A;"></div>BROWN - PETROLEUM SERVICE</div>
+                 <div class="color-legend-item"><div class="color-box" style="background-color: #FF0000;"></div>RED - FIRE SERVICE</div>
+                 <div class="color-legend-item"><div class="color-box" style="background-color: #F5F5DC; border-color: #333;"></div>CREAM - SEWER/WASTE WATER</div>
+                 <div class="color-legend-item"><div class="color-box" style="background-color: #8A2BE2;"></div>INDIGO - RECYCLED WATER</div>
+            </div>
+
+            <h2 class="section-title">Service Details</h2>
+            <div id="serviceEntries">
+                <!-- Service entries will be added here -->
+            </div>
+            <button id="addServiceButton" class="add-button mb-6" type="button">+ Add Service Entry</button>
+
+            <h2 class="section-title">Site Photos</h2>
+            <div id="photoEntries">
+                <!-- Photo entries will be added here -->
+            </div>
+            <button id="addPhotoButton" class="add-button mb-6" type="button">+ Add Photo</button>
+
+            <h2 class="section-title">Report Summary & Methodology</h2>
+            <div class="form-group mb-6">
+                <label for="reportSummary">Summary:</label>
+                <textarea id="reportSummary" rows="10" placeholder="Describe the methodologies used (RD, GPR, sweep modes) and reiterate key findings and recommendations.">RD (Radio Detection) was used to locate all services using a mixture of Direct Connection, Induction Clamp and Induction. RD was also used on Power Mode, Radio Mode and Passive Mode to sweep the scope of works.
+
+After all surface features have been traced out accordingly, GPR (Ground Penetrating Radar) was then used to scan area of works to confirm assets previously located with RD and to discover any unknown services or anomalies in the ground.
+
+The locations of utilities, which were reported to exist at the time of works, were compiled from a combination of field techniques and available data from co-operating utility authorities through BYDA plans. Whilst all care is taken in locating utilities on site it cannot be guaranteed that the locations determined by this utility investigation are without flaw of any kind. Therefore, it is always highly recommended that the users undertake potholing to directly confirm asset locations where conflict with construction or any excavations may occur, due caution should also be exercised during any excavation activity in places where utilities may reasonably be expected to occur.
+
+All services marked up on site are indicative only.
+Completed full sweep of area with EMI, completed full GPR sweep of area.
+
+- Traced and marked for approximate location of services in scope as requested by client.
+- Located for live, traceable and visible services only.
+- All marks and underground services should be potholed prior to any ground disturbances.
+- Highly recommend referring to service plans.
+- Cannot Locate earth straps, non-conductive and Irrigation services.
+- No design, Construction or service plans provided.
+- This service AND REPORT are only a guide.
+- Passive scan conducted of entire scope.
+- Advise potholing for all services.</textarea>
+            </div>
+
+            <h2 class="section-title">General Notes & Observations</h2>
+            <div class="form-group mb-6">
+                <label for="generalNotes">Notes:</label>
+                <textarea id="generalNotes" rows="5" placeholder="Any additional observations, challenges encountered, or recommendations."></textarea>
+            </div>
+
+            <h2 class="section-title">Compliance with Australian Standard AS 5488-2019 (SUI)</h2>
+            <div class="mb-6 text-gray-700">
+                <p class="mb-2">This report aims to align with the principles of AS 5488-2019 'Classification of Subsurface Utility Information (SUI)'. Key aspects include:</p>
+                <ul class="list-disc list-inside ml-4">
+                    <li><strong>Quality Levels:</strong> All reported utility locations are assigned a Quality Level (A, B, C, or D) as defined in this report, indicating the method of acquisition and associated accuracy.</li>
+                    <li><strong>Standardized Markings:</strong> On-site markings adhere to the AS 5488 colour legend for consistent communication.</li>
+                    <li><strong>Detailed Descriptions:</strong> Each service entry includes details on type, material, depth, location, and notes to provide comprehensive information.</li>
+                    <li><strong>Asset Identification:</strong> Unique Asset IDs, Asset Owners, and Asset Status are recorded where applicable, contributing to better utility management.</li>
+                    <li><strong>Methodology Transparency:</strong> The report clearly outlines the locating methodologies (e.g., Radio Detection, GPR, connection methods) used for transparency and understanding of data reliability.</li>
+                    <li><strong>Disclaimer & Recommendations:</strong> The report includes disclaimers and recommendations for potholing to ensure user safety and project integrity, in line with industry best practices.</li>
+                </ul>
+                <p class="mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>
+            </div>
+
+            <div class="disclaimer-box">
+                <p><strong>DISCLAIMER:</strong> This plan includes information describing the location of subterranean features, which were purported to exist at the time of the survey. This information was compiled from a combination of field techniques and available data from cooperating utility authorities. Whilst all care has been taken in the preparation of this plan of survey, <span id="disclaimerCompanyName">GROUNDSCAN</span> cannot guarantee that the plan is without flaw of any kind. Therefore, <span id="disclaimerCompanyName2">GROUNDSCAN</span> expressly disclaims all liability for errors or omissions of any kind whatsoever or from any loss, damage, or other consequences, which may arise from any person relying on anything, stated on this plan. In particular, it is recommended that users satisfy themselves as to the location of subterranean features such as utilities, which may or may not be shown on this plan by deploying AND IMPLEMENTING vacuum excavation techniques.</p>
+            </div>
+
+            <button id="printReportButton" class="print-button no-print" type="button">Generate & Print Report</button>
+        </div>
+
+        <div id="reportOutput" class="report-output hidden">
+            <!-- Generated report will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to add a new service entry block
+        function addServiceEntry() {
+            const container = document.getElementById('serviceEntries');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'service-entry grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative';
+            newEntry.innerHTML = `
+                <div class="form-group">
+                    <label>Service Type:</label>
+                    <select class="service-type">
+                        <option value="">Select Type</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Communication">Communication</option>
+                        <option value="Water">Water</option>
+                        <option value="Sewer">Sewer</option>
+                        <option value="Gas">Gas</option>
+                        <option value="Stormwater">Stormwater</option>
+                        <option value="GPR Anomaly/Unknown">GPR Anomaly/Unknown</option>
+                        <option value="Fire Service">Fire Service</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Method of Connection:</label>
+                    <select class="method-of-connection">
+                        <option value="">Select Method</option>
+                        <option value="Direct Connection">Direct Connection</option>
+                        <option value="Induction Clamp">Induction Clamp</option>
+                        <option value="Induction (Broadcast)">Induction (Broadcast)</option>
+                        <option value="Passive (Power)">Passive (Power)</option>
+                        <option value="Passive (Radio)">Passive (Radio)</option>
+                        <option value="GPR (Ground Penetrating Radar)">GPR (Ground Penetrating Radar)</option>
+                        <option value="Visual (Surface Features)">Visual (Surface Features)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Material:</label>
+                    <input type="text" class="service-material" placeholder="e.g., PVC, Copper, Steel, Fibre Optic">
+                </div>
+                <div class="form-group">
+                    <label>Depth (m):</label>
+                    <input type="text" class="service-depth" placeholder="e.g., 0.8m">
+                </div>
+                <div class="form-group">
+                    <label>Location (Lat/Lon or Local Grid):</label>
+                    <input type="text" class="service-location" placeholder="e.g., -33.1234, 149.5678 or N: 12345, E: 67890">
+                </div>
+                <div class="form-group">
+                    <label>Asset ID (AS 5488-2019):</label>
+                    <input type="text" class="asset-id" placeholder="e.g., EL001, CO005">
+                </div>
+                <div class="form-group">
+                    <label>Asset Owner:</label>
+                    <input type="text" class="asset-owner" placeholder="e.g., Essential Energy, Telstra">
+                </div>
+                 <div class="form-group">
+                    <label>Asset Status:</label>
+                    <select class="asset-status">
+                        <option value="">Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Abandoned">Abandoned</option>
+                        <option value="Proposed">Proposed</option>
+                        <option value="Unknown">Unknown</option>
+                    </select>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label>Description/Notes:</label>
+                    <textarea class="service-notes" rows="2" placeholder="e.g., Active 3-phase power cable, Abandoned Telstra conduit"></textarea>
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Function to add a new photo entry block
+        function addPhotoEntry() {
+            const container = document.getElementById('photoEntries');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'photo-entry mb-4 relative';
+            newEntry.innerHTML = `
+                <div class="form-group mb-2">
+                    <label>Upload Photo:</label>
+                    <input type="file" class="photo-input" accept="image/*" onchange="previewImage(event, this)">
+                    <img class="photo-preview mt-2 rounded-lg max-w-full h-auto hidden" style="max-height: 200px;">
+                </div>
+                <div class="form-group">
+                    <label>Photo Caption:</label>
+                    <textarea class="photo-caption" rows="1" placeholder="e.g., Water meter and fire service valves"></textarea>
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Function to preview image after upload
+        function previewImage(event, inputElement) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imgElement = inputElement.nextElementSibling; // Get the img tag
+                imgElement.src = reader.result;
+                imgElement.classList.remove('hidden');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Function to generate the report content
+        function generateReport() {
+            const outputDiv = document.getElementById('reportOutput');
+            let reportContent = '';
+
+            // Get company details for the report
+            const companyName = document.getElementById('companyName').value || 'Your Company Name';
+            const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
+            const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
+
+            // Header for the generated report
+            reportContent += `# ${companyName} Report\n\n`;
+            reportContent += `${companyABN}\n`;
+            reportContent += `${companyContact}\n\n`;
+            reportContent += `The following report is an accumulation of information gathered from in-field investigations at the time of the report and any changes of assets in the field cannot be accounted for. It is recommended that services be potholed for confirmation prior to any construction or excavations and a Quality Level A be achieved. This report does not replace the need for valid Dial Before You Dig (DBYD) plans to be always on site.\n\n`;
+
+            // Project & Site Information
+            reportContent += `## Project & Site Information\n\n`;
+            reportContent += `**Project Name:** ${document.getElementById('projectName').value || 'N/A'}\n`;
+            reportContent += `**Client Name:** ${document.getElementById('clientName').value || 'N/A'}\n`;
+            reportContent += `**Site Address/Location:** ${document.getElementById('siteAddress').value || 'N/A'}\n`;
+            reportContent += `**Report Date:** ${document.getElementById('reportDate').value || 'N/A'}\n`;
+            reportContent += `**Locating Date(s):** ${document.getElementById('locatingDate').value || 'N/A'}\n`;
+            reportContent += `**Locator Name:** ${document.getElementById('locatorName').value || 'N/A'}\n`;
+            reportContent += `**Equipment Used:** ${document.getElementById('equipmentUsed').value || 'N/A'}\n`;
+            reportContent += `**Accuracy Achieved:** ${document.getElementById('accuracyAchieved').value || 'N/A'}\n`;
+            reportContent += `**DBYD Plans Provided:** ${document.getElementById('dbydPlansProvided').value || 'N/A'}\n`;
+            reportContent += `**DBYD Reference Number(s):** ${document.getElementById('dbydRefNumbers').value || 'N/A'}\n`;
+            reportContent += `**Site Specific Plans Provided:** ${document.getElementById('sitePlansProvided').value || 'N/A'}\n`;
+            reportContent += `**Site Plans Notes:** ${document.getElementById('sitePlansNotes').value || 'N/A'}\n\n`;
+
+            // Quality Levels Explained
+            reportContent += `## Quality Levels Explained (AS 5488-2019)\n\n`;
+            reportContent += `**QUALITY LEVEL A (QLA):** Visualization/Confirmation of a service, position, and depth, by non-destructive digging methods or points of entry to pits or manholes. Recommended Quality Level prior to construction or excavation.\n\n`;
+            reportContent += `**QUALITY LEVEL B (QLB):** Locating of services using radio detection methods. Acceptable range of accuracy for Quality Level B is +/-300mm for position and +/-500mm for depth.\n\n`;
+            reportContent += `**QUALITY LEVEL C (QLC):** Services marked out using only surface features in the field. Surface features include hydrants, gas markers, pits etc. No indication of service location or depth can be attained from Quality Level C.\n\n`;
+            reportContent += `**QUALITY LEVEL D (QLD):** Services marked out using DBYD plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.\n\n`;
+
+            // Marking Colour Legend
+            reportContent += `## Marking Colour Legend (AS 5488-2019)\n\n`;
+            reportContent += `- PINK - GPR/UNKNOWN SERVICE\n`;
+            reportContent += `- WHITE - COMMUNICATION SERVICE\n`;
+            reportContent += `- ORANGE - ELECTRICAL SERVICE\n`;
+            reportContent += `- BLUE - WATER SERVICE\n`;
+            reportContent += `- YELLOW - GAS SERVICE\n`;
+            reportContent += `- GREEN - STORMWATER SERVICE\n`;
+            reportContent += `- PURPLE - SEWER SERVICE\n`;
+            reportContent += `- BROWN - PETROLEUM SERVICE\n`;
+            reportContent += `- RED - FIRE SERVICE\n`;
+            reportContent += `- CREAM - SEWER/WASTE WATER\n`;
+            reportContent += `- INDIGO - RECYCLED WATER\n\n`;
+
+            // Service Details
+            const serviceEntries = document.querySelectorAll('#serviceEntries .service-entry');
+            if (serviceEntries.length > 0) {
+                reportContent += `## Service Details\n\n`;
+                serviceEntries.forEach((entry, index) => {
+                    const type = entry.querySelector('.service-type').value || 'N/A';
+                    const method = entry.querySelector('.method-of-connection').value || 'N/A';
+                    const material = entry.querySelector('.service-material').value || 'N/A';
+                    const depth = entry.querySelector('.service-depth').value || 'N/A';
+                    const location = entry.querySelector('.service-location').value || 'N/A';
+                    const assetId = entry.querySelector('.asset-id').value || 'N/A';
+                    const assetOwner = entry.querySelector('.asset-owner').value || 'N/A';
+                    const assetStatus = entry.querySelector('.asset-status').value || 'N/A';
+                    const notes = entry.querySelector('.service-notes').value || 'N/A';
+
+                    reportContent += `### Service Entry ${index + 1}\n`;
+                    reportContent += `- **Type:** ${type}\n`;
+                    reportContent += `- **Method of Connection:** ${method}\n`;
+                    reportContent += `- **Material:** ${material}\n`;
+                    reportContent += `- **Depth:** ${depth}\n`;
+                    reportContent += `- **Location:** ${location}\n`;
+                    reportContent += `- **Asset ID:** ${assetId}\n`;
+                    reportContent += `- **Asset Owner:** ${assetOwner}\n`;
+                    reportContent += `- **Asset Status:** ${assetStatus}\n`;
+                    reportContent += `- **Notes:** ${notes}\n\n`;
+                });
+            } else {
+                reportContent += `## Service Details\n\nNo services recorded.\n\n`;
+            }
+
+            // Site Photos
+            const photoEntries = document.querySelectorAll('#photoEntries .photo-entry');
+            if (photoEntries.length > 0) {
+                reportContent += `## Site Photos\n\n`;
+                photoEntries.forEach((entry, index) => {
+                    const imgElement = entry.querySelector('.photo-preview');
+                    const caption = entry.querySelector('.photo-caption').value || 'No caption';
+                    if (imgElement && imgElement.src && !imgElement.classList.contains('hidden')) {
+                        reportContent += `### Photo ${index + 1}: ${caption}\n`;
+                        reportContent += `![${caption}](${imgElement.src})\n\n`; // Markdown for image
+                    } else {
+                        reportContent += `### Photo ${index + 1}: ${caption} (Image not embedded in text output - please refer to original file if printed)\n\n`;
+                    }
+                });
+            } else {
+                reportContent += `## Site Photos\n\nNo photos attached.\n\n`;
+            }
+
+            // Report Summary & Methodology
+            reportContent += `## Report Summary & Methodology\n\n`;
+            reportContent += `${document.getElementById('reportSummary').value || 'N/A'}\n\n`;
+
+            // General Notes
+            reportContent += `## General Notes & Observations\n\n`;
+            reportContent += `${document.getElementById('generalNotes').value || 'N/A'}\n\n`;
+
+            // Compliance with AS 5488-2019
+            reportContent += `## Compliance with Australian Standard AS 5488-2019 (SUI)\n\n`;
+            reportContent += `This report aims to align with the principles of AS 5488-2019 'Classification of Subsurface Utility Information (SUI)'. Key aspects include:\n\n`;
+            reportContent += `- **Quality Levels:** All reported utility locations are assigned a Quality Level (A, B, C, or D) as defined in this report, indicating the method of acquisition and associated accuracy.\n`;
+            reportContent += `- **Standardized Markings:** On-site markings adhere to the AS 5488 colour legend for consistent communication.\n`;
+            reportContent += `- **Detailed Descriptions:** Each service entry includes details on type, material, depth, location, and notes to provide comprehensive information.\n`;
+            reportContent += `- **Asset Identification:** Unique Asset IDs, Asset Owners, and Asset Status are recorded where applicable, contributing to better utility management.\n`;
+            reportContent += `- **Methodology Transparency:** The report clearly outlines the locating methodologies (e.g., Radio Detection, GPR, connection methods) used for transparency and understanding of data reliability.\n`;
+            reportContent += `- **Disclaimer & Recommendations:** The report includes disclaimers and recommendations for potholing to ensure user safety and project integrity, in line with industry best practices.\n\n`;
+            reportContent += `It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.\n\n`;
+
+
+            // Final Disclaimer
+            reportContent += `## DISCLAIMER\n\n`;
+            reportContent += `This plan includes information describing the location of subterranean features, which were purported to exist at the time of the survey. This information was compiled from a combination of field techniques and available data from cooperating utility authorities. Whilst all care has been taken in the preparation of this plan of survey, ${companyName} cannot guarantee that the plan is without flaw of any kind. Therefore, ${companyName} expressly disclaims all liability for errors or omissions of any kind whatsoever or from any loss, damage, or other consequences, which may arise from any person relying on anything, stated on this plan. In particular, it is recommended that users satisfy themselves as to the location of subterranean features such as utilities, which may or may not be shown on this plan by deploying AND IMPLEMENTING vacuum excavation techniques.\n\n`;
+
+            outputDiv.innerHTML = `<pre>${reportContent}</pre>`; // Use <pre> for basic formatting preservation
+            outputDiv.classList.remove('hidden');
+
+            // Trigger print dialog
+            window.print();
+        }
+
+        // This function runs once the entire HTML document is loaded and parsed.
+        window.onload = function() {
+            // Get references to the buttons
+            const addServiceButton = document.getElementById('addServiceButton');
+            const addPhotoButton = document.getElementById('addPhotoButton');
+            const printReportButton = document.getElementById('printReportButton');
+
+            // Attach event listeners to the buttons
+            addServiceButton.addEventListener('click', addServiceEntry);
+            addPhotoButton.addEventListener('click', addPhotoEntry);
+            printReportButton.addEventListener('click', generateReport);
+
+            // Event Delegation for Remove Buttons (listen on parent containers)
+            // This ensures remove buttons work even if added dynamically
+            const serviceEntriesContainer = document.getElementById('serviceEntries');
+            const photoEntriesContainer = document.getElementById('photoEntries');
+
+            serviceEntriesContainer.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-entry-btn')) {
+                    event.target.closest('.service-entry').remove();
+                }
+            });
+            photoEntriesContainer.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-entry-btn')) {
+                    event.target.closest('.photo-entry').remove();
+                }
+            });
+
+            // Initial Load: Add one service and one photo entry
+            addServiceEntry();
+            addPhotoEntry();
+
+            // Set current date for reportDate and locatingDate
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months start at 0!
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('reportDate').value = formattedDate;
+            document.getElementById('locatingDate').value = formattedDate;
+
+            // Set default company name in disclaimer for initial load and update dynamically
+            const companyNameInput = document.getElementById('companyName');
+            const updateCompanyNameInDisclaimers = function() {
+                const currentCompanyName = companyNameInput.value || companyNameInput.placeholder.replace('Your Company Name (e.g., ', '').replace(')', '');
+                document.getElementById('disclaimerCompanyName').textContent = currentCompanyName;
+                document.getElementById('disclaimerCompanyName2').textContent = currentCompanyName;
+            };
+
+            // Initial call to set company name in disclaimers
+            updateCompanyNameInDisclaimers();
+
+            // Listen for changes to the company name input
+            companyNameInput.addEventListener('input', updateCompanyNameInDisclaimers);
+        };
+    </script>
+</body>
+</html>
