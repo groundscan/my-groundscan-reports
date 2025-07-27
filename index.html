@@ -26,6 +26,9 @@
             padding-bottom: 16px;
             margin-bottom: 24px;
             text-align: center;
+            display: flex; /* Added for flexbox layout */
+            justify-content: space-between; /* Distribute items */
+            align-items: center; /* Vertically align items */
         }
         .header img {
             max-width: 150px; /* Adjust logo size as needed */
@@ -33,6 +36,23 @@
             margin-bottom: 10px;
             border-radius: 8px;
         }
+        /* Style for the new Certloc logo */
+        #certlocLogo {
+            max-width: 100px; /* Adjust size as needed */
+            height: auto;
+            flex-shrink: 0; /* Prevent it from shrinking */
+        }
+        /* Placeholder to balance the Certloc logo's width, helping center the main content */
+        .header .left-spacer {
+            width: 100px; /* Match certlocLogo max-width */
+            flex-shrink: 0;
+        }
+        /* Main company info container to allow centering */
+        .header .company-info {
+            flex-grow: 1; /* Allows it to take available space and push logos to sides */
+            text-align: center;
+        }
+
         .section-title {
             font-weight: 600;
             color: #2c5282;
@@ -187,6 +207,19 @@
             }
             .header {
                 border-bottom: 1px solid #000;
+                display: flex; /* Ensure flex behavior for print */
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 16px;
+                margin-bottom: 24px;
+            }
+            .header .company-info {
+                flex-grow: 1;
+                text-align: center;
+            }
+            .header .left-spacer, .header #certlocLogo {
+                visibility: visible; /* Ensure logos are visible in print */
+                display: block;
             }
             h1, h2, h3 {
                 color: #000 !important;
@@ -196,6 +229,7 @@
                 border: 1px solid #000;
                 color: #000;
                 box-shadow: none;
+                page-break-inside: avoid; /* Keep the disclaimer box together */
             }
             .disclaimer-box strong {
                 color: #000 !important;
@@ -208,12 +242,13 @@
                 display: block;
                 max-width: 100%;
                 height: auto;
-                break-inside: avoid; /* Avoid breaking images across pages */
+                page-break-inside: avoid; /* Ensure image itself doesn't split */
             }
             /* Ensure content breaks gracefully across pages */
             .report-section {
-                page-break-inside: avoid;
-                margin-bottom: 1rem; /* Add some space between sections */
+                page-break-inside: avoid; /* Keep entire sections together if possible */
+                page-break-after: auto; /* Allow sections to break after if needed */
+                margin-bottom: 1rem;
             }
             .report-section-title {
                 font-size: 1.5rem; /* Larger headings for print */
@@ -231,14 +266,44 @@
                 margin-top: 1rem;
                 margin-bottom: 0.5rem;
                 color: #000;
-                page-break-after: avoid;
+                page-break-after: avoid; /* Keep subtitle with content */
             }
             .report-text-block {
                 margin-bottom: 0.5rem;
+                page-break-inside: auto; /* Allow breaking inside long paragraphs */
             }
             .report-list-item {
                 margin-left: 1.5rem;
                 margin-bottom: 0.25rem;
+            }
+
+            /* NEW/REFINED: Specific rules for generated content blocks to avoid breaking */
+            /* Targets the grid container for project info fields */
+            .report-output .grid.gap-x-8.gap-y-2 {
+                page-break-inside: avoid;
+            }
+            /* Targets the div containing Quality Levels paragraphs */
+            .report-output .mb-6.text-gray-700 {
+                page-break-inside: avoid;
+            }
+            /* Targets the grid container for color legend */
+            .report-output .grid.gap-2.text-gray-700 {
+                page-break-inside: avoid;
+            }
+            /* Targets the div for each generated service/photo entry */
+            .report-output .mb-4.p-4.border.rounded-lg.bg-gray-50 {
+                page-break-inside: avoid;
+            }
+            /* Ensure lists stay together */
+            .report-output ul.list-disc {
+                page-break-inside: avoid;
+            }
+            /* Try to keep textareas/long text blocks with their labels */
+            .report-output .report-text-block.whitespace-pre-wrap {
+                page-break-before: avoid;
+            }
+            .report-output .report-text-block strong {
+                page-break-after: avoid; /* Keep bold titles with following text */
             }
         }
     </style>
@@ -246,20 +311,25 @@
 <body>
     <div class="container">
         <div class="header">
-            <!-- Company Logo Placeholder -->
-            <!-- To add your logo:
-                 1. Place your logo image file (e.g., 'groundscan_logo.png') in the SAME folder as this HTML file.
-                 2. Change the 'src' attribute below to your logo's filename.
-                 Alternatively, you can use a direct URL if your logo is hosted online.
-            -->
-            <img id="companyLogo" src="groundscan_logo.png" alt="GROUNDSCAN Logo">
-            <h1 class="text-3xl font-bold text-gray-800">Utility Locating Report</h1>
-            <p class="text-gray-600">Comprehensive Site Assessment</p>
-            <div class="text-gray-700 mt-4">
-                <input type="text" id="companyName" class="text-center text-lg font-semibold mb-1" value="GROUNDSCAN" placeholder="Your Company Name (e.g., GROUNDSCAN)">
-                <input type="text" id="companyABN" class="text-center text-sm mb-1" value="ABN: 93 727 813 582" placeholder="ABN: XX XXX XXX XXX">
-                <input type="text" id="companyContact" class="text-center text-sm" value="Phone: 0423407793 | Email: admin@groundscan.com.au" placeholder="Phone: XXXX XXX XXX | Email: info@yourcompany.com">
+            <!-- Left Spacer (to help center main content) -->
+            <div class="left-spacer"></div>
+
+            <!-- Main Company Info (Centered) -->
+            <div class="company-info">
+                <img id="companyLogo" src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 150px; height: auto;">
+                <h1 class="text-3xl font-bold text-gray-800">Utility Locating Report</h1>
+                <p class="text-gray-600">Comprehensive Site Assessment</p>
+                <div class="text-gray-700 mt-4">
+                    <input type="text" id="companyName" class="text-center text-lg font-semibold mb-1" value="GROUNDSCAN" placeholder="Your Company Name (e.g., GROUNDSCAN)">
+                    <input type="text" id="companyABN" class="text-center text-sm mb-1" value="ABN: 93 727 813 582" placeholder="ABN: XX XXX XXX XXX">
+                    <input type="text" id="companyContact" class="text-center text-sm" value="Phone: 0423407793 | Email: admin@groundscan.com.au" placeholder="Phone: XXXX XXX XXX | Email: info@yourcompany.com">
+                </div>
             </div>
+
+            <!-- Certloc Logo on Right -->
+            <!-- IMPORTANT: You need to place your Certloc logo file named 'certloc_logo.png'
+                 in the SAME folder as this HTML file for it to display correctly. -->
+            <img id="certlocLogo" src="certloc_logo.png" alt="CERTLOC Logo">
         </div>
 
         <div class="no-print">
@@ -437,6 +507,8 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                     <li><strong>Detailed Descriptions:</strong> Each service entry includes details on type, material, depth, location, and notes to provide comprehensive information.</li>
                     <li><strong>Asset Identification:</strong> Unique Asset IDs, Asset Owners, and Asset Status are recorded where applicable, contributing to better utility management.</li>
                     <li><strong>Methodology Transparency:</strong> The report clearly outlines the locating methodologies (e.g., Radio Detection, GPR, connection methods) used for transparency and understanding of data reliability.</li>
+                    <li><strong>Effective Communication:</strong> Findings are clearly communicated to project managers, construction teams, and relevant stakeholders to ensure informed decision-making and coordinated excavation.</li>
+                    <li><strong>Adherence to "5 Ps":</strong> Our methodology incorporates the industry's "5 Ps" framework (Plan, Prepare, Potentially Pothole, Protect, Proceed) to minimise risks and prevent damage.</li>
                     <li><strong>Disclaimer & Recommendations:</strong> The report includes disclaimers and recommendations for potholing to ensure user safety and project integrity, in line with industry best practices.</li>
                 </ul>
                 <p class="mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>
@@ -708,7 +780,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             // --- Marking Colour Legend ---
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Marking Colour Legend (AS 5488-2019)</h2>`;
-            reportHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-gray-700 text-base">`;
+            reportHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6 text-gray-700 text-base">`;
             reportHtml += `<div class="color-legend-item"><div class="color-box" style="background-color: #FFC0CB;"></div>PINK - GPR/UNKNOWN SERVICE</div>`;
             reportHtml += `<div class="color-legend-item"><div class="color-box" style="background-color: #FFFFFF; border-color: #333;"></div>WHITE - COMMUNICATION SERVICE</div>`;
             reportHtml += `<div class="color-legend-item"><div class="color-box" style="background-color: #FFA500;"></div>ORANGE - ELECTRICAL SERVICE</div>`;
@@ -788,7 +860,8 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             // --- Safety & Damage Information ---
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Safety & Damage Information</h2>`;
-            reportHtml += `<p class="report-text-block"><strong>Safety Measures Taken During Works:</strong> ${document.getElementById('safetyMeasures').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Duty of Care & Safety Documentation:</strong> All works were conducted with adherence to Duty of Care principles, utilising Safe Work Method Statements (SWMS) and/or Job Safety Analysis (JSA) to ensure safety for personnel, assets, and the public.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Specific Safety Measures Taken During Works:</strong> ${document.getElementById('safetyMeasures').value || 'N/A'}</p>`;
             reportHtml += `<p class="report-text-block"><strong>Damage to Services Found During Locating:</strong> ${document.getElementById('damageFound').value || 'None reported.'}</p>`;
             reportHtml += `</div>`;
 
@@ -807,23 +880,25 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('generalNotes').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
 
-            // --- Compliance with AS 5488-2019 ---
+            // --- Compliance with Australian Standard AS 5488-2019 (SUI) ---
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Compliance with Australian Standard AS 5488-2019 (SUI)</h2>`;
-            reportHtml += `<p class="report-text-block">This report aims to align with the principles of AS 5488-2019 'Classification of Subsurface Utility Information (SUI)'. Key aspects include:</p>`;
-            reportHtml += `<ul class="list-disc list-inside ml-4 text-base">`;
+            reportHtml += `<p class="mb-2">This report aims to align with the principles of AS 5488-2019 'Classification of Subsurface Utility Information (SUI)'. Key aspects include:</p>`;
+            reportHtml += `<ul class="list-disc list-inside ml-4">`;
             reportHtml += `<li class="report-list-item"><strong>Quality Levels:</strong> All reported utility locations are assigned a Quality Level (A, B, C, or D) as defined in this report, indicating the method of acquisition and associated accuracy.</li>`;
             reportHtml += `<li class="report-list-item"><strong>Standardized Markings:</strong> On-site markings adhere to the AS 5488 colour legend for consistent communication.</li>`;
             reportHtml += `<li class="report-list-item"><strong>Detailed Descriptions:</strong> Each service entry includes details on type, material, depth, location, and notes to provide comprehensive information.</li>`;
             reportHtml += `<li class="report-list-item"><strong>Asset Identification:</strong> Unique Asset IDs, Asset Owners, and Asset Status are recorded where applicable, contributing to better utility management.</li>`;
             reportHtml += `<li class="report-list-item"><strong>Methodology Transparency:</strong> The report clearly outlines the locating methodologies (e.g., Radio Detection, GPR, connection methods) used for transparency and understanding of data reliability.</li>`;
+            reportHtml += `<li class="report-list-item"><strong>Effective Communication:</strong> Findings are clearly communicated to project managers, construction teams, and relevant stakeholders to ensure informed decision-making and coordinated excavation.</li>`;
+            reportHtml += `<li class="report-list-item"><strong>Adherence to "5 Ps":</strong> Our methodology incorporates the industry's "5 Ps" framework (Plan, Prepare, Potentially Pothole, Protect, Proceed) to minimise risks and prevent damage.</li>`;
             reportHtml += `<li class="report-list-item"><strong>Disclaimer & Recommendations:</strong> The report includes disclaimers and recommendations for potholing to ensure user safety and project integrity, in line with industry best practices.</li>`;
             reportHtml += `</ul>`;
-            reportHtml += `<p class="report-text-block mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>`;
+            reportHtml += `<p class="mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>`;
             reportHtml += `</div>`;
 
             // --- Final Disclaimer ---
-            reportHtml += `<div class="report-section disclaimer-box">`;
+            reportHtml += `<div class="disclaimer-box report-section">`; /* Added report-section class here too */
             reportHtml += `<p><strong>DISCLAIMER:</strong> This plan includes information describing the location of subterranean features, which were purported to exist at the time of the survey. This information was compiled from a combination of field techniques and available data from cooperating utility authorities. Whilst all care has been taken in the preparation of this plan of survey, <span id="disclaimerCompanyNameOutput">${companyName}</span> cannot guarantee that the plan is without flaw of any kind. Therefore, <span id="disclaimerCompanyNameOutput2">${companyName}</span> expressly disclaims all liability for errors or omissions of any kind whatsoever or from any loss, damage, or other consequences, which may arise from any person relying on anything, stated on this plan. In particular, it is recommended that users satisfy themselves as to the location of subterranean features such as utilities, which may or may not be shown on this plan by deploying AND IMPLEMENTING vacuum excavation techniques.</p>`;
             reportHtml += `</div>`;
 
