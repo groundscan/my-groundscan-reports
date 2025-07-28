@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Risk Assessment - GROUNDSCAN</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        #certlocLogo {
+            max-width: 100px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        .header .left-spacer {
+            width: 100px;
+            flex-shrink: 0;
+        }
+        .header .company-info {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ebf4ff;
+        }
+        input[type="text"], input[type="date"], input[type="time"], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus, select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.25);
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .add-button {
+            background-color: #4299e1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .add-button:hover {
+            background-color: #3182ce;
+        }
+        .remove-button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.875rem;
+        }
+        .remove-button:hover {
+            background-color: #c53030;
+        }
+        .risk-entry, .photo-entry {
+            border: 1px solid #ebf4ff;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .print-button {
+            background-color: #38a169;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .print-button:hover {
+            background-color: #2f855a;
+        }
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .risk-grid div {
+            padding: 5px 0;
+        }
+        .risk-level-low { background-color: #d1fae5; color: #065f46; border-radius: 4px; padding: 4px 8px; text-align: center; }
+        .risk-level-medium { background-color: #fef3c7; color: #92400e; border-radius: 4px; padding: 4px 8px; text-align: center; }
+        .risk-level-high { background-color: #fee2e2; color: #991b1b; border-radius: 4px; padding: 4px 8px; text-align: center; }
+        .risk-level-extreme { background-color: #fecaca; color: #7f1d1d; border-radius: 4px; padding: 4px 8px; text-align: center; }
+
+        /* --- Print Specific Styles --- */
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .report-output {
+                border: none;
+                background-color: #ffffff;
+                padding: 0;
+                margin-top: 0;
+                display: block !important;
+                width: 100%;
+            }
+            input, textarea, select, button {
+                border: none !important;
+                box-shadow: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .form-group label {
+                font-weight: normal;
+                color: #000;
+            }
+            .risk-entry, .photo-entry {
+                border: 1px solid #e2e8f0; /* Keep border for print clarity */
+                background-color: #ffffff;
+                padding: 10px;
+                margin-bottom: 8px;
+                page-break-inside: avoid; /* Keep entries together */
+            }
+            .header {
+                border-bottom: 1px solid #000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 16px;
+                margin-bottom: 24px;
+            }
+            .header .company-info {
+                flex-grow: 1;
+                text-align: center;
+            }
+            .header .left-spacer, .header #certlocLogo {
+                visibility: visible;
+                display: block;
+            }
+            h1, h2, h3 {
+                color: #000 !important;
+            }
+            .risk-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Adjust for print */
+                gap: 5px; /* Smaller gap for print */
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+            .risk-grid div {
+                padding: 2px 4px;
+                font-size: 0.85rem; /* Smaller font for print */
+            }
+            .risk-level-low, .risk-level-medium, .risk-level-high, .risk-level-extreme {
+                border: 1px solid #ccc; /* Add border for print visibility */
+            }
+            .report-section {
+                margin-bottom: 0.5rem;
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            .report-section-title {
+                font-size: 1.4rem;
+                margin-top: 0.8rem;
+                margin-bottom: 0.3rem;
+                padding-bottom: 0.1rem;
+            }
+            .report-subsection-title {
+                font-size: 1.1rem;
+                margin-top: 0.6rem;
+                margin-bottom: 0.3rem;
+            }
+            .report-text-block {
+                margin-bottom: 0.2rem;
+            }
+            .report-output img {
+                max-height: 300px; /* Adjust as needed for print */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Left Spacer -->
+            <div class="left-spacer"></div>
+
+            <!-- Main Company Info -->
+            <div class="company-info">
+                <img id="companyLogo" src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 150px; height: auto;">
+                <h1 class="text-3xl font-bold text-gray-800">Digital Risk Assessment</h1>
+                <p class="text-gray-600">Onsite Hazard Identification & Control</p>
+                <div class="text-gray-700 mt-4">
+                    <input type="text" id="companyName" class="text-center text-lg font-semibold mb-1" value="GROUNDSCAN" placeholder="Your Company Name (e.g., GROUNDSCAN)">
+                    <input type="text" id="companyABN" class="text-center text-sm mb-1" value="ABN: 93 727 813 582" placeholder="ABN: XX XXX XXX XXX">
+                    <input type="text" id="companyContact" class="text-center text-sm" value="Phone: 0423407793 | Email: admin@groundscan.com.au" placeholder="Phone: XXXX XXX XXX | Email: info@yourcompany.com">
+                </div>
+            </div>
+
+            <!-- Certloc Logo -->
+            <img id="certlocLogo" src="certloc_logo.png" alt="CERTLOC Logo">
+        </div>
+
+        <div class="no-print">
+            <h2 class="section-title">Project & Assessment Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="projectName">Project Name:</label>
+                    <input type="text" id="projectName" placeholder="e.g., Blue Gum Plantation - Fence Install">
+                </div>
+                <div class="form-group">
+                    <label for="siteAddress">Site Address/Location:</label>
+                    <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123 DP 123456, Forest Road, Rockley NSW"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="assessmentDate">Assessment Date:</label>
+                    <input type="date" id="assessmentDate">
+                </div>
+                <div class="form-group">
+                    <label for="assessorName">Assessor Name:</label>
+                    <input type="text" id="assessorName" value="Zane Somerville" placeholder="e.g., Zane Somerville">
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="taskDescription">Description of Task/Work to be Performed:</label>
+                    <textarea id="taskDescription" rows="3" placeholder="e.g., Utility locating and hydro excavation for new fence post installation."></textarea>
+                </div>
+            </div>
+
+            <h2 class="section-title">Risk Matrix Guide</h2>
+            <div class="mb-6 text-gray-700">
+                <p class="mb-2">This assessment uses a simple risk matrix. Assess each hazard by its **Likelihood** and **Consequence** to determine the **Initial Risk Rating**. Then, identify **Control Measures** and determine the **Residual Risk Rating** after controls are applied.</p>
+                <div class="grid grid-cols-2 gap-4 text-sm mt-4">
+                    <div>
+                        <strong>Likelihood:</strong>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Almost Certain (5)</li>
+                            <li>Likely (4)</li>
+                            <li>Possible (3)</li>
+                            <li>Unlikely (2)</li>
+                            <li>Rare (1)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong>Consequence:</strong>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Catastrophic (5)</li>
+                            <li>Major (4)</li>
+                            <li>Moderate (3)</li>
+                            <li>Minor (2)</li>
+                            <li>Insignificant (1)</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="mt-4"><strong>Risk Rating = Likelihood x Consequence</strong></p>
+                <div class="grid grid-cols-4 gap-2 text-center text-sm mt-2">
+                    <div class="risk-level-low">1-5: Low Risk</div>
+                    <div class="risk-level-medium">6-10: Medium Risk</div>
+                    <div class="risk-level-high">11-15: High Risk</div>
+                    <div class="risk-level-extreme">16-25: Extreme Risk</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Hazard Identification & Risk Control</h2>
+            <div id="riskEntries">
+                <!-- Risk entries will be added here -->
+            </div>
+            <button id="addRiskButton" class="add-button mb-6" type="button">+ Add Risk Entry</button>
+
+            <h2 class="section-title">Site Photos</h2>
+            <div id="photoEntries">
+                <!-- Photo entries will be added here -->
+            </div>
+            <button id="addPhotoButton" class="add-button mb-6" type="button">+ Add Photo</button>
+
+            <h2 class="section-title">Overall Risk Assessment Summary</h2>
+            <div class="form-group mb-6">
+                <label for="overallSummary">Summary of Overall Site Risk and Final Control Measures:</label>
+                <textarea id="overallSummary" rows="6" placeholder="Provide an overall summary of the site's risk profile, confirmation of controls implemented, and any remaining residual risks."></textarea>
+            </div>
+
+            <h2 class="section-title">Assessor Sign-off</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="assessorSignatureName">Assessor Name (for digital signature):</label>
+                    <input type="text" id="assessorSignatureName" value="Zane Somerville" placeholder="Type your name for digital sign-off">
+                </div>
+                <div class="form-group">
+                    <label for="signOffDate">Sign-off Date:</label>
+                    <input type="date" id="signOffDate">
+                </div>
+            </div>
+
+            <button id="printAssessmentButton" class="print-button no-print" type="button">Generate & Print Assessment</button>
+        </div>
+
+        <div id="reportOutput" class="report-output hidden">
+            <!-- Generated report will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate risk rating
+        function calculateRiskRating(likelihood, consequence) {
+            if (!likelihood || !consequence) return 'N/A';
+            const rating = parseInt(likelihood) * parseInt(consequence);
+            if (rating >= 16) return `<span class="risk-level-extreme">Extreme (${rating})</span>`;
+            if (rating >= 11) return `<span class="risk-level-high">High (${rating})</span>`;
+            if (rating >= 6) return `<span class="risk-level-medium">Medium (${rating})</span>`;
+            if (rating >= 1) return `<span class="risk-level-low">Low (${rating})</span>`;
+            return 'N/A';
+        }
+
+        // Function to add a new risk entry block
+        function addRiskEntry(hazard = '', initialLikelihood = '', initialConsequence = '', controlMeasures = '', residualLikelihood = '', residualConsequence = '') {
+            const container = document.getElementById('riskEntries');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'risk-entry relative';
+            const entryId = `riskEntry_${Date.now()}`;
+            newEntry.id = entryId;
+
+            newEntry.innerHTML = `
+                <div class="form-group mb-2">
+                    <label>Hazard/Risk Description:</label>
+                    <textarea class="hazard-description" rows="2" placeholder="e.g., Underground electrical cable, Uneven terrain, Falling objects">${hazard}</textarea>
+                </div>
+                <div class="risk-grid">
+                    <div>
+                        <label>Initial Likelihood:</label>
+                        <select class="initial-likelihood">
+                            <option value="">Select</option>
+                            <option value="5">Almost Certain (5)</option>
+                            <option value="4">Likely (4)</option>
+                            <option value="3">Possible (3)</option>
+                            <option value="2">Unlikely (2)</option>
+                            <option value="1">Rare (1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Initial Consequence:</label>
+                        <select class="initial-consequence">
+                            <option value="">Select</option>
+                            <option value="5">Catastrophic (5)</option>
+                            <option value="4">Major (4)</option>
+                            <option value="3">Moderate (3)</option>
+                            <option value="2">Minor (2)</option>
+                            <option value="1">Insignificant (1)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label>Initial Risk Rating:</label>
+                        <div class="initial-risk-rating text-center p-2 rounded-md bg-gray-100">N/A</div>
+                    </div>
+                </div>
+                <div class="form-group mb-2">
+                    <label>Control Measures Implemented:</label>
+                    <textarea class="control-measures" rows="3" placeholder="e.g., Conducted full EML sweep, Established exclusion zone, Used non-destructive digging">${controlMeasures}</textarea>
+                </div>
+                <div class="risk-grid">
+                    <div>
+                        <label>Residual Likelihood:</label>
+                        <select class="residual-likelihood">
+                            <option value="">Select</option>
+                            <option value="5">Almost Certain (5)</option>
+                            <option value="4">Likely (4)</option>
+                            <option value="3">Possible (3)</option>
+                            <option value="2">Unlikely (2)</option>
+                            <option value="1">Rare (1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Residual Consequence:</label>
+                        <select class="residual-consequence">
+                            <option value="">Select</option>
+                            <option value="5">Catastrophic (5)</option>
+                            <option value="4">Major (4)</option>
+                            <option value="3">Moderate (3)</option>
+                            <option value="2">Minor (2)</option>
+                            <option value="1">Insignificant (1)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label>Residual Risk Rating:</label>
+                        <div class="residual-risk-rating text-center p-2 rounded-md bg-gray-100">N/A</div>
+                    </div>
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+
+            // Set initial values if provided (for pre-filled entries)
+            newEntry.querySelector('.hazard-description').value = hazard;
+            newEntry.querySelector('.initial-likelihood').value = initialLikelihood;
+            newEntry.querySelector('.initial-consequence').value = initialConsequence;
+            newEntry.querySelector('.control-measures').value = controlMeasures;
+            newEntry.querySelector('.residual-likelihood').value = residualLikelihood;
+            newEntry.querySelector('.residual-consequence').value = residualConsequence;
+
+
+            // Add event listeners for risk calculation
+            const initialLikelihoodSelect = newEntry.querySelector('.initial-likelihood');
+            const initialConsequenceSelect = newEntry.querySelector('.initial-consequence');
+            const initialRiskRatingDiv = newEntry.querySelector('.initial-risk-rating');
+
+            const residualLikelihoodSelect = newEntry.querySelector('.residual-likelihood');
+            const residualConsequenceSelect = newEntry.querySelector('.residual-consequence');
+            const residualRiskRatingDiv = newEntry.querySelector('.residual-risk-rating');
+
+            const updateInitialRisk = () => {
+                initialRiskRatingDiv.innerHTML = calculateRiskRating(initialLikelihoodSelect.value, initialConsequenceSelect.value);
+            };
+            const updateResidualRisk = () => {
+                residualRiskRatingDiv.innerHTML = calculateRiskRating(residualLikelihoodSelect.value, residualConsequenceSelect.value);
+            };
+
+            initialLikelihoodSelect.addEventListener('change', updateInitialRisk);
+            initialConsequenceSelect.addEventListener('change', updateInitialRisk);
+            residualLikelihoodSelect.addEventListener('change', updateResidualRisk);
+            residualConsequenceSelect.addEventListener('change', updateResidualRisk);
+
+            // Initial calculation for pre-filled values
+            updateInitialRisk();
+            updateResidualRisk();
+        }
+
+        // Function to add a new photo entry block
+        function addPhotoEntry() {
+            const container = document.getElementById('photoEntries');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'photo-entry mb-4 relative';
+            const photoId = `photoEntry_${Date.now()}`; // Unique ID for each entry
+            newEntry.id = photoId; // Assign the ID
+
+            newEntry.innerHTML = `
+                <div class="form-group mb-2">
+                    <label>Upload Photo:</label>
+                    <input type="file" class="photo-input" accept="image/*" onchange="previewImage(event, this, '${photoId}_preview')">
+                    <img id="${photoId}_preview" class="photo-preview mt-2 rounded-lg max-w-full h-auto hidden" style="max-height: 200px;">
+                </div>
+                <div class="form-group">
+                    <label>Photo Caption:</label>
+                    <textarea class="photo-caption" rows="1" placeholder="e.g., Site access point, Located utility marking"></textarea>
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Function to preview image after upload (now takes preview ID)
+        function previewImage(event, inputElement, previewId) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imgElement = document.getElementById(previewId);
+                imgElement.src = reader.result;
+                imgElement.classList.remove('hidden');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Function to generate the report content
+        function generateAssessment() {
+            const outputDiv = document.getElementById('reportOutput');
+            let assessmentHtml = '';
+
+            const companyName = document.getElementById('companyName').value || 'Your Company Name';
+            const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
+            const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
+
+            // --- Header ---
+            assessmentHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
+            assessmentHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`;
+            assessmentHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">Digital Risk Assessment</h1>`;
+            assessmentHtml += `<h2 class="text-2xl text-gray-600 mb-8">Onsite Hazard Identification & Control</h2>`;
+            assessmentHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
+            assessmentHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
+            assessmentHtml += `<p class="text-md text-gray-600 mb-8">Assessment Date: ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
+            assessmentHtml += `<div class="mt-auto text-gray-700 text-base">`;
+            assessmentHtml += `<p>Assessor: ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+            assessmentHtml += `<p>${companyContact}</p>`;
+            assessmentHtml += `</div>`;
+            assessmentHtml += `<img src="certloc_logo.png" alt="CERTLOC Logo" class="absolute bottom-4 right-4" style="max-width: 80px; height: auto;">`;
+            assessmentHtml += `</div>`;
+
+            // --- Project & Assessment Details ---
+            assessmentHtml += `<div class="report-section">`;
+            assessmentHtml += `<h2 class="report-section-title">Project & Assessment Details</h2>`;
+            assessmentHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-base">`;
+            assessmentHtml += `<p><strong>Project Name:</strong> ${document.getElementById('projectName').value || 'N/A'}</p>`;
+            assessmentHtml += `<p><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
+            assessmentHtml += `<p><strong>Assessment Date:</strong> ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
+            assessmentHtml += `<p><strong>Assessor Name:</strong> ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+            assessmentHtml += `<p class="md:col-span-2"><strong>Description of Task/Work:</strong> ${document.getElementById('taskDescription').value || 'N/A'}</p>`;
+            assessmentHtml += `</div>`;
+            assessmentHtml += `</div>`;
+
+            // --- Risk Matrix Guide ---
+            assessmentHtml += `<div class="report-section">`;
+            assessmentHtml += `<h2 class="report-section-title">Risk Matrix Guide</h2>`;
+            assessmentHtml += `<p class="report-text-block">This assessment uses a simple risk matrix. Assess each hazard by its <strong>Likelihood</strong> and <strong>Consequence</strong> to determine the <strong>Initial Risk Rating</strong>. Then, identify <strong>Control Measures</strong> and determine the <strong>Residual Risk Rating</strong> after controls are applied.</p>`;
+            assessmentHtml += `<div class="grid grid-cols-2 gap-4 text-sm mt-4">`;
+            assessmentHtml += `<div><strong>Likelihood:</strong><ul class="list-disc list-inside ml-4"><li>Almost Certain (5)</li><li>Likely (4)</li><li>Possible (3)</li><li>Unlikely (2)</li><li>Rare (1)</li></ul></div>`;
+            assessmentHtml += `<div><strong>Consequence:</strong><ul class="list-disc list-inside ml-4"><li>Catastrophic (5)</li><li>Major (4)</li><li>Moderate (3)</li><li>Minor (2)</li><li>Insignificant (1)</li></ul></div>`;
+            assessmentHtml += `</div>`;
+            assessmentHtml += `<p class="report-text-block mt-4"><strong>Risk Rating = Likelihood x Consequence</strong></p>`;
+            assessmentHtml += `<div class="grid grid-cols-4 gap-2 text-center text-sm mt-2">`;
+            assessmentHtml += `<div class="risk-level-low">1-5: Low Risk</div>`;
+            assessmentHtml += `<div class="risk-level-medium">6-10: Medium Risk</div>`;
+            assessmentHtml += `<div class="risk-level-high">11-15: High Risk</div>`;
+            assessmentHtml += `<div class="risk-level-extreme">16-25: Extreme Risk</div>`;
+            assessmentHtml += `</div>`;
+            assessmentHtml += `</div>`;
+
+            // --- Hazard Identification & Risk Control ---
+            const riskEntries = document.querySelectorAll('#riskEntries .risk-entry');
+            if (riskEntries.length > 0) {
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
+                riskEntries.forEach((entry, index) => {
+                    const hazard = entry.querySelector('.hazard-description').value || 'N/A';
+                    const initialLikelihood = entry.querySelector('.initial-likelihood').value;
+                    const initialConsequence = entry.querySelector('.initial-consequence').value;
+                    const controlMeasures = entry.querySelector('.control-measures').value || 'N/A';
+                    const residualLikelihood = entry.querySelector('.residual-likelihood').value;
+                    const residualConsequence = entry.querySelector('.residual-consequence').value;
+
+                    assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">`;
+                    assessmentHtml += `<h3 class="report-subsection-title">Hazard ${index + 1}: ${hazard}</h3>`;
+                    assessmentHtml += `<p class="report-text-block"><strong>Initial Risk:</strong></p>`;
+                    assessmentHtml += `<div class="risk-grid">`;
+                    assessmentHtml += `<div>Likelihood: ${initialLikelihood || 'N/A'}</div>`;
+                    assessmentHtml += `<div>Consequence: ${initialConsequence || 'N/A'}</div>`;
+                    assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(initialLikelihood, initialConsequence)}</div>`;
+                    assessmentHtml += `</div>`;
+                    assessmentHtml += `<p class="report-text-block mt-2"><strong>Control Measures:</strong> ${controlMeasures}</p>`;
+                    assessmentHtml += `<p class="report-text-block"><strong>Residual Risk:</strong></p>`;
+                    assessmentHtml += `<div class="risk-grid">`;
+                    assessmentHtml += `<div>Likelihood: ${residualLikelihood || 'N/A'}</div>`;
+                    assessmentHtml += `<div>Consequence: ${residualConsequence || 'N/A'}</div>`;
+                    assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(residualLikelihood, residualConsequence)}</div>`;
+                    assessmentHtml += `</div>`;
+                    assessmentHtml += `</div>`;
+                });
+                assessmentHtml += `</div>`;
+            } else {
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
+                assessmentHtml += `<p class="report-text-block">No hazards identified.</p>`;
+                assessmentHtml += `</div>`;
+            }
+
+            // --- Site Photos ---
+            const photoEntries = document.querySelectorAll('#photoEntries .photo-entry');
+            if (photoEntries.length > 0) {
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
+                photoEntries.forEach((entry, index) => {
+                    const imgElement = entry.querySelector('.photo-preview');
+                    const caption = entry.querySelector('.photo-caption').value || 'No caption';
+                    assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50 text-center">`;
+                    assessmentHtml += `<h3 class="report-subsection-title">Photo ${index + 1}: ${caption}</h3>`;
+                    if (imgElement && imgElement.src && !imgElement.classList.contains('hidden')) {
+                        assessmentHtml += `<img src="${imgElement.src}" alt="${caption}" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 350px;">`;
+                    } else {
+                        assessmentHtml += `<p class="text-red-500">Image not available for display.</p>`;
+                    }
+                    assessmentHtml += `</div>`;
+                });
+                assessmentHtml += `</div>`;
+            } else {
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
+                assessmentHtml += `<p class="report-text-block">No photos attached.</p>`;
+                assessmentHtml += `</div>`;
+            }
+
+            // --- Overall Risk Assessment Summary ---
+            assessmentHtml += `<div class="report-section">`;
+            assessmentHtml += `<h2 class="report-section-title">Overall Risk Assessment Summary</h2>`;
+            assessmentHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('overallSummary').value || 'No overall summary provided.'}</p>`;
+            assessmentHtml += `</div>`;
+
+            // --- Assessor Sign-off ---
+            assessmentHtml += `<div class="report-section">`;
+            assessmentHtml += `<h2 class="report-section-title">Assessor Sign-off</h2>`;
+            assessmentHtml += `<p class="report-text-block"><strong>Assessor Name:</strong> ${document.getElementById('assessorSignatureName').value || 'N/A'}</p>`;
+            assessmentHtml += `<p class="report-text-block"><strong>Sign-off Date:</strong> ${document.getElementById('signOffDate').value || 'N/A'}</p>`;
+            assessmentHtml += `<p class="report-text-block mt-4"><em>This digital assessment serves as a record of the onsite risk identification and control measures implemented at the time of assessment.</em></p>`;
+            assessmentHtml += `</div>`;
+
+            // --- Appendices (Certificate) ---
+            assessmentHtml += `<div class="report-section">`;
+            assessmentHtml += `<h2 class="report-section-title">Appendices</h2>`;
+            assessmentHtml += `<h3 class="report-subsection-title">Certificates</h3>`;
+            assessmentHtml += `<p class="report-text-block">Locator Certification Number: ${document.getElementById('locatorCertificationNumber').value || 'N/A'}</p>`;
+            assessmentHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+            assessmentHtml += `</div>`;
+
+
+            outputDiv.innerHTML = assessmentHtml;
+            outputDiv.classList.remove('hidden');
+            window.print();
+        }
+
+        window.onload = function() {
+            // Set current date for assessmentDate and signOffDate
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('assessmentDate').value = formattedDate;
+            document.getElementById('signOffDate').value = formattedDate;
+
+            // Add initial risk entries (example common hazards)
+            addRiskEntry('Underground Electrical Cables', '4', '5', 'Obtain BYDA plans, Conduct EML sweep (power/radio/passive), Verify with hydro excavation, Establish exclusion zone, Use insulated tools.', '2', '2');
+            addRiskEntry('Unknown/Unmarked Utilities', '3', '4', 'Conduct comprehensive EML/GPR sweep, Cross-reference with historical data/site observations, Use non-destructive digging for verification.', '2', '2');
+            addRiskEntry('Hydro Excavation Pressure/Splash-back', '3', '3', 'Maintain safe stand-off distance, Use appropriate nozzle pressure, Wear full PPE (face shield, waterproofs), Ensure clear work area.', '1', '2');
+            addRiskEntry('Uneven/Slippery Terrain', '2', '2', 'Wear appropriate footwear, Maintain three points of contact on uneven surfaces, Clear debris, Use spotter if necessary.', '1', '1');
+            addRiskEntry('Traffic/Public Interference', '3', '3', 'Establish clear exclusion zones, Implement traffic management plan (if applicable), Use signage/barriers, Brief public on safety.', '1', '2');
+
+            // Add initial photo entry
+            addPhotoEntry();
+
+            // Event listeners for buttons
+            document.getElementById('addRiskButton').addEventListener('click', () => addRiskEntry());
+            document.getElementById('addPhotoButton').addEventListener('click', addPhotoEntry);
+            document.getElementById('printAssessmentButton').addEventListener('click', generateAssessment);
+
+            // Event delegation for remove buttons
+            document.getElementById('riskEntries').addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-entry-btn')) {
+                    event.target.closest('.risk-entry').remove();
+                }
+            });
+            document.getElementById('photoEntries').addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-entry-btn')) {
+                    event.target.closest('.photo-entry').remove();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
