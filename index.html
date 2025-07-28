@@ -249,7 +249,14 @@
                 page-break-inside: avoid; /* Keep entire sections together if possible */
                 page-break-after: auto; /* Allow sections to break after if needed */
                 margin-bottom: 1rem;
+                /* Force new page for major sections if content is substantial */
+                page-break-before: always;
             }
+            /* Override for the very first section so it doesn't start with a blank page */
+            .report-output .report-section:first-of-type {
+                page-break-before: auto;
+            }
+
             .report-section-title {
                 font-size: 1.5rem; /* Larger headings for print */
                 font-weight: bold;
@@ -293,6 +300,8 @@
             /* Targets the div for each generated service/photo entry */
             .report-output .mb-4.p-4.border.rounded-lg.bg-gray-50 {
                 page-break-inside: avoid;
+                display: block; /* Ensure it takes full width for print */
+                width: 100%;
             }
             /* Ensure lists stay together */
             .report-output ul.list-disc {
@@ -347,11 +356,23 @@
                     <label for="clientName">Client Name:</label>
                     <input type="text" id="clientName" placeholder="e.g., Forestry NSW">
                 </div>
+                <div class="form-group">
+                    <label for="clientContactDetails">Client Contact Details:</label>
+                    <input type="text" id="clientContactDetails" placeholder="e.g., John Smith, 04XX XXX XXX, john@client.com">
+                </div>
                 <div class="form-group md:col-span-2">
                     <label for="siteAddress">Site Address/Location:</label>
-                    <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123, Forest Road, Rockley NSW"></textarea>
+                    <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123 DP 123456, Forest Road, Rockley NSW"></textarea>
                     <button type="button" class="get-gps-button" onclick="getSiteAddressGPS()">Get Current GPS Location</button>
                     <p id="siteAddressGpsStatus" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+                <div class="form-group">
+                    <label for="siteLGA">Local Government Area (LGA):</label>
+                    <input type="text" id="siteLGA" placeholder="e.g., Bathurst Regional Council">
+                </div>
+                <div class="form-group">
+                    <label for="projectReferenceNumber">Project Reference Number:</label>
+                    <input type="text" id="projectReferenceNumber" placeholder="e.g., PRJ-2025-001">
                 </div>
                 <div class="form-group">
                     <label for="reportDate">Report Date:</label>
@@ -366,7 +387,11 @@
                     <input type="text" id="locatorName" value="Zane Somerville" placeholder="e.g., Zane Smith">
                 </div>
                 <div class="form-group">
-                    <label for="locatorAccreditation">Accreditation Certificate:</label>
+                    <label for="locatorCertificationNumber">Locator Certification Number (e.g., CERTLOC CL-XXXX):</label>
+                    <input type="text" id="locatorCertificationNumber" placeholder="e.g., CERTLOC CL-1234">
+                </div>
+                <div class="form-group">
+                    <label for="locatorAccreditation">Accreditation Certificate (Image):</label>
                     <input type="file" id="locatorAccreditation" accept="image/*" onchange="previewImage(event, this, 'locatorAccreditationPreview')">
                     <img id="locatorAccreditationPreview" class="photo-preview mt-2 rounded-lg max-w-full h-auto hidden" style="max-height: 200px;">
                 </div>
@@ -382,14 +407,16 @@
                         <option value="Mala Easy Locator HDR">Mala Easy Locator HDR</option>
                         <option value="Sonde/Transmitter">Sonde/Transmitter</option>
                         <option value="Push Rod Camera">Push Rod Camera</option>
-                        <option value="Vaccum Excavator/NDD">Vaccum Excavator/NDD</option>
+                        <option value="Vaccum Excavator/NDD (Non-Destructive Digging)">Vaccum Excavator/NDD (Non-Destructive Digging)</option>
+                        <option value="CCTV Camera">CCTV Camera</option>
+                        <option value="Acoustic Leak Detector">Acoustic Leak Detector</option>
                         <option value="Eos Arrow Gold (GPS/GNSS)">Eos Arrow Gold (GPS/GNSS)</option>
                         <option value="Trimble R10 (GPS/GNSS)">Trimble R10 (GPS/GNSS)</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="accuracyAchieved">Accuracy Achieved:</label>
+                    <label for="accuracyAchieved">Accuracy Achieved (AS 5488-2019 QL-B):</label>
                     <select id="accuracyAchieved">
                         <option value="">Select Accuracy</option>
                         <!-- Options will be generated by JavaScript -->
@@ -407,7 +434,10 @@
                     <label for="dbydRefNumbers">DBYD Reference Number(s):</label>
                     <input type="text" id="dbydRefNumbers" placeholder="e.g., 1234567890">
                 </div>
-                <!-- Removed DBYD PDF Upload as per user request -->
+                <div class="form-group">
+                    <label for="dbydInquiryDate">DBYD Inquiry Date:</label>
+                    <input type="date" id="dbydInquiryDate">
+                </div>
                 <div class="form-group">
                     <label for="sitePlansProvided">Site Specific Plans Provided?</label>
                     <select id="sitePlansProvided">
@@ -417,9 +447,31 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="sitePlansNotes">Site Plans Notes (e.g., "No site service plans provided"):</label>
+                    <label for="sitePlansNotes">Site Plans Notes (e.g., "Site clash plan provided for fence installation by a CJV"):</label>
                     <input type="text" id="sitePlansNotes" placeholder="e.g., No site service plans provided">
                 </div>
+                <div class="form-group md:col-span-2">
+                    <label for="siteContext">Site Context (e.g., residential, commercial, greenfield):</label>
+                    <textarea id="siteContext" rows="2" placeholder="e.g., Residential property with mature trees and mixed soil conditions."></textarea>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="projectPurpose">Project Scope/Purpose of Survey:</label>
+                    <textarea id="projectPurpose" rows="3" placeholder="e.g., To identify underground services prior to excavation for a new building foundation."></textarea>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="surveyAreaDescription">Survey Area Description (specific boundaries/zones):</label>
+                    <textarea id="surveyAreaDescription" rows="3" placeholder="e.g., Area within 5m of proposed building footprint, marked with white paint."></textarea>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="environmentalConsiderations">Environmental Considerations (e.g., flood-prone, heritage):</label>
+                    <textarea id="environmentalConsiderations" rows="2" placeholder="e.g., Site is located in a flood-prone area; no heritage constraints identified."></textarea>
+                </div>
+            </div>
+
+            <h2 class="section-title">Executive Summary</h2>
+            <div class="form-group mb-6">
+                <label for="executiveSummary">Brief Overview, Key Findings, and Scope of Work:</label>
+                <textarea id="executiveSummary" rows="8" placeholder="Provide a concise overview of the report's purpose, a summary of located services and critical risks, and the area surveyed."></textarea>
             </div>
 
             <h2 class="section-title">Quality Levels Explained (AS 5488-2019)</h2>
@@ -451,6 +503,29 @@
             </div>
             <button id="addServiceButton" class="add-button mb-6" type="button">+ Add Service Entry</button>
 
+            <h2 class="section-title">Critical Risks & Conflicts</h2>
+            <div class="form-group mb-6">
+                <label for="criticalRisks">Highlight services in conflict with planned excavation or posing critical risks:</label>
+                <textarea id="criticalRisks" rows="4" placeholder="e.g., High-voltage power cable running directly through proposed excavation zone."></textarea>
+            </div>
+
+            <h2 class="section-title">Maps and Drawings References</h2>
+            <p class="text-sm text-gray-600 mb-4">Note: Physical maps, cross-sections, and CAD/GIS files are external. Please reference them here.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="mapReference">Site Plan/Map Reference:</label>
+                    <input type="text" id="mapReference" placeholder="e.g., Refer to 'ProjectX_SiteMap_V2.pdf' in Appendices">
+                </div>
+                <div class="form-group">
+                    <label for="cadGisFileReference">CAD/GIS File Reference:</label>
+                    <input type="text" id="cadGisFileReference" placeholder="e.g., 'ProjectX_Utilities.dwg' provided separately">
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="gpsDatumNote">GPS/GNSS Coordinate Datum Note:</label>
+                    <input type="text" id="gpsDatumNote" value="All GPS coordinates are referenced to GDA2020/MGA Zone 56 unless otherwise specified." placeholder="e.g., GDA2020/MGA Zone 56">
+                </div>
+            </div>
+
             <h2 class="section-title">Site Photos</h2>
             <p class="text-sm text-gray-600 mb-4">Note: For drawing/editing on photos (e.g., to show service paths), please use your iPad's native photo editing tools (like the Markup feature in the Photos app) *before* uploading the image here. This report does not support in-browser image editing.</p>
             <div id="photoEntries">
@@ -460,12 +535,28 @@
 
             <h2 class="section-title">Safety & Damage Information</h2>
             <div class="form-group mb-4">
-                <label for="safetyMeasures">Safety Measures Taken During Works:</label>
-                <textarea id="safetyMeasures" rows="4" placeholder="e.g., Site induction completed, appropriate PPE worn, exclusion zones established, spotter present."></textarea>
+                <label for="safetyMeasures">General Safety Measures Taken During Works:</label>
+                <textarea id="safetyMeasures" rows="4" placeholder="e.g., Operating under safe work method statement GS01, site induction completed, appropriate PPE worn, exclusion zones established, spotter present."></textarea>
+            </div>
+            <div class="form-group mb-4">
+                <label for="excavationPrecautions">Excavation Precautions (e.g., hand-digging guidelines):</label>
+                <textarea id="excavationPrecautions" rows="3" placeholder="e.g., Hand-digging is required within 500mm of all marked services."></textarea>
+            </div>
+            <div class="form-group mb-4">
+                <label for="utilityOwnerCoordinationNotes">Utility Owner Coordination Notes (for further verification):</label>
+                <textarea id="utilityOwnerCoordinationNotes" rows="3" placeholder="e.g., Contact Essential Energy for further verification of HV cables prior to excavation."></textarea>
+            </div>
+            <div class="form-group mb-4">
+                <label for="permitsApprovalsNotes">Permits and Approvals Required:</label>
+                <textarea id="permitsApprovalsNotes" rows="3" placeholder="e.g., Sydney Water permit required for any work within 1m of sewer main."></textarea>
+            </div>
+            <div class="form-group mb-6">
+                <label for="signageBarriersRecommendations">Signage and Barriers Recommendations:</label>
+                <textarea id="signageBarriersRecommendations" rows="3" placeholder="e.g., Install appropriate signage and physical barriers around marked utility corridors."></textarea>
             </div>
             <div class="form-group mb-6">
                 <label for="damageFound">Damage to Services Found During Locating (if any):</label>
-                <textarea id="damageFound" rows="4" placeholder="e.g., No damage found, minor damage to communication conduit (reported to asset owner)."></textarea>
+                <textarea id="damageFound" rows="4" placeholder="e.g., No damage found on Services. Elevated Telstra junction box noted, likely due to livestock rubbing."></textarea>
             </div>
 
 
@@ -498,6 +589,12 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 <textarea id="generalNotes" rows="5" placeholder="Any additional observations, challenges encountered, or recommendations."></textarea>
             </div>
 
+            <h2 class="section-title">Limitations of Survey</h2>
+            <div class="form-group mb-6">
+                <label for="limitationsOfSurvey">Describe any limitations of the survey:</label>
+                <textarea id="limitationsOfSurvey" rows="4" placeholder="e.g., Areas not surveyed due to dense vegetation. GPR effectiveness limited in high-clay content soils."></textarea>
+            </div>
+
             <h2 class="section-title">Compliance with Australian Standard AS 5488-2019 (SUI)</h2>
             <div class="mb-6 text-gray-700">
                 <p class="mb-2">This report aims to align with the principles of AS 5488-2019 'Classification of Subsurface Utility Information (SUI)'. Key aspects include:</p>
@@ -513,6 +610,57 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 </ul>
                 <p class="mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>
             </div>
+
+            <h2 class="section-title">References</h2>
+            <div class="form-group mb-4">
+                <label for="relevantStandardsNotes">Relevant Standards & Guidelines:</label>
+                <textarea id="relevantStandardsNotes" rows="3" placeholder="e.g., AS 5488.1-2019, SafeWork NSW Work Health and Safety Regulation 2017."></textarea>
+            </div>
+            <div class="form-group mb-4">
+                <label for="localCouncilUtilityRequirements">Local Council or Utility Provider Specific Requirements:</label>
+                <textarea id="localCouncilUtilityRequirements" rows="3" placeholder="e.g., All excavation within 2m of council assets requires specific approval."></textarea>
+            </div>
+
+            <h2 class="section-title">Appendices</h2>
+            <p class="text-sm text-gray-600 mb-4">Upload relevant supporting documents here.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="dbydPlansUpload">DBYD Plans (PDF/Image):</label>
+                    <input type="file" id="dbydPlansUpload" accept=".pdf,image/*" multiple onchange="previewFiles(event, 'dbydPlansPreview')">
+                    <div id="dbydPlansPreview" class="mt-2 grid grid-cols-2 gap-2"></div>
+                </div>
+                <div class="form-group">
+                    <label for="rawDataUpload">Raw Survey Data (e.g., GPR files, EML logs):</label>
+                    <input type="file" id="rawDataUpload" multiple onchange="previewFiles(event, 'rawDataPreview')">
+                    <div id="rawDataPreview" class="mt-2 grid grid-cols-2 gap-2"></div>
+                </div>
+                <div class="form-group">
+                    <label for="fieldNotesUpload">Field Notes/Sketches (PDF/Image):</label>
+                    <input type="file" id="fieldNotesUpload" accept=".pdf,image/*" multiple onchange="previewFiles(event, 'fieldNotesPreview')">
+                    <div id="fieldNotesPreview" class="mt-2 grid grid-cols-2 gap-2"></div>
+                </div>
+            </div>
+            <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h3 class="report-subsection-title">Certificates</h3>
+                <p class="report-text-block">Proof of locator certification, including the accreditation certificate image and certification number provided in the Project & Site Information section.</p>
+            </div>
+            <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h3 class="report-subsection-title">Glossary</h3>
+                <p class="report-text-block"><strong>QL-A:</strong> Quality Level A - Highest accuracy, visual confirmation via non-destructive digging.</p>
+                <p class="report-text-block"><strong>QL-B:</strong> Quality Level B - Locating via geophysical methods (e.g., EML, GPR) with specified accuracy range.</p>
+                <p class="report-text-block"><strong>QL-C:</strong> Quality Level C - Locating via surface features only.</p>
+                <p class="report-text-block"><strong>QL-D:</strong> Quality Level D - Locating via existing records/plans only.</p>
+                <p class="report-text-block"><strong>AS 5488.1-2019:</strong> Australian Standard for Classification of Subsurface Utility Information.</p>
+                <p class="report-text-block"><strong>DBYD:</strong> Dial Before You Dig - National referral service for identifying underground utilities.</p>
+                <p class="report-text-block"><strong>EML:</strong> Electromagnetic Location - Method using electromagnetic fields to detect metallic services.</p>
+                <p class="report-text-block"><strong>GPR:</strong> Ground-Penetrating Radar - Method using radar pulses to image the subsurface.</p>
+                <p class="report-text-block"><strong>NDD:</strong> Non-Destructive Digging - Excavation methods (e.g., vacuum excavation) that do not damage utilities.</p>
+                <p class="report-text-block"><strong>SWMS:</strong> Safe Work Method Statement - Document outlining high-risk work procedures.</p>
+                <p class="report-text-block"><strong>JSA:</strong> Job Safety Analysis - Method for breaking down tasks to identify hazards and controls.</p>
+                <p class="report-text-block"><strong>APWA Color Codes:</strong> Standardized color markings for different utility types.</p>
+                <p class="report-text-block"><strong>GDA2020/MGA Zone:</strong> Geocentric Datum of Australia 2020 / Map Grid of Australia Zone - Australian coordinate system.</p>
+            </div>
+
 
             <div class="disclaimer-box">
                 <p><strong>DISCLAIMER:</strong> This plan includes information describing the location of subterranean features, which were purported to exist at the time of the survey. This information was compiled from a combination of field techniques and available data from cooperating utility authorities. Whilst all care has been taken in the preparation of this plan of survey, <span id="disclaimerCompanyName">GROUNDSCAN</span> cannot guarantee that the plan is without flaw of any kind. Therefore, <span id="disclaimerCompanyName2">GROUNDSCAN</span> expressly disclaims all liability for errors or omissions of any kind whatsoever or from any loss, damage, or other consequences, which may arise from any person relying on anything, stated on this plan. In particular, it is recommended that users satisfy themselves as to the location of subterranean features such as utilities, which may or may not be shown on this plan by deploying AND IMPLEMENTING vacuum excavation techniques.</p>
@@ -652,7 +800,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                     </select>
                 </div>
                 <div class="form-group md:col-span-2">
-                    <label>Description/Notes:</label>
+                    <label>Description/Notes (e.g., condition, suspected service):</label>
                     <textarea class="service-notes" rows="2" placeholder="e.g., Active 3-phase power cable, Abandoned Telstra conduit"></textarea>
                 </div>
                 <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
@@ -694,6 +842,31 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reader.readAsDataURL(event.target.files[0]);
         }
 
+        // Function to preview multiple files (for appendices)
+        function previewFiles(event, previewContainerId) {
+            const container = document.getElementById(previewContainerId);
+            container.innerHTML = ''; // Clear previous previews
+            const files = event.target.files;
+            if (files) {
+                Array.from(files).forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'text-sm text-gray-600 truncate';
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.className = 'mt-1 rounded-md max-w-full h-auto';
+                        img.style.maxHeight = '100px';
+                        fileDiv.appendChild(img);
+                    }
+                    const fileNameSpan = document.createElement('span');
+                    fileNameSpan.textContent = file.name;
+                    fileDiv.appendChild(fileNameSpan);
+                    container.appendChild(fileDiv);
+                });
+            }
+        }
+
+
         // Function to generate accuracy options
         function generateAccuracyOptions() {
             const selectElement = document.getElementById('accuracyAchieved');
@@ -719,31 +892,57 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
             const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
 
-            // --- Report Header ---
-            reportHtml += `<div class="report-section text-center mb-8">`;
-            // Logo (will only show if groundscan_logo.png is correctly linked)
-            reportHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 150px; height: auto;">`;
-            reportHtml += `<h1 class="text-3xl font-bold text-gray-800 mb-1">${companyName} Report</h1>`;
-            reportHtml += `<p class="text-gray-600 text-lg">Comprehensive Site Assessment</p>`;
-            reportHtml += `<p class="text-gray-700 text-sm mt-2">${companyABN}</p>`;
-            reportHtml += `<p class="text-gray-700 text-sm">${companyContact}</p>`;
+            // --- Report Header / Cover Page ---
+            reportHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
+            reportHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`; /* Larger for cover */
+            reportHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">${companyName}</h1>`;
+            reportHtml += `<h2 class="text-2xl text-gray-600 mb-8">Utility Locating Report</h2>`;
+            reportHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
+            reportHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
+            reportHtml += `<p class="text-md text-gray-600 mb-8">Report Date: ${document.getElementById('reportDate').value || 'N/A'}</p>`;
+            reportHtml += `<div class="mt-auto text-gray-700 text-base">`; /* Pushes contact info to bottom */
+            reportHtml += `<p>Prepared by: ${document.getElementById('locatorName').value || 'N/A'}</p>`;
+            if (document.getElementById('locatorCertificationNumber').value) {
+                reportHtml += `<p>Certification: ${document.getElementById('locatorCertificationNumber').value}</p>`;
+            }
+            reportHtml += `<p>${companyContact}</p>`;
+            reportHtml += `<p class="mt-4">Client: ${document.getElementById('clientName').value || 'N/A'}</p>`;
+            if (document.getElementById('clientContactDetails').value) {
+                reportHtml += `<p>Client Contact: ${document.getElementById('clientContactDetails').value}</p>`;
+            }
+            reportHtml += `</div>`;
+            // Certloc Logo on Cover Page (smaller, bottom right)
+            reportHtml += `<img src="certloc_logo.png" alt="CERTLOC Logo" class="absolute bottom-4 right-4" style="max-width: 80px; height: auto;">`;
+            reportHtml += `</div>`; // End Cover Page section
+
+
+            // --- Executive Summary ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">Executive Summary</h2>`;
+            reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('executiveSummary').value || 'No executive summary provided.'}</p>`;
             reportHtml += `</div>`;
 
-            // Initial Disclaimer
+
+            // Initial Disclaimer (after Executive Summary)
             reportHtml += `<div class="report-section disclaimer-box mb-8">`;
             reportHtml += `<p>The following report is an accumulation of information gathered from in-field investigations at the time of the report and any changes of assets in the field cannot be accounted for. It is recommended that services be potholed for confirmation prior to any construction or excavations and a Quality Level A be achieved. This report does not replace the need for valid Dial Before You Dig (DBYD) plans to be always on site.</p>`;
             reportHtml += `</div>`;
+
 
             // --- Project & Site Information ---
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Project & Site Information</h2>`;
             reportHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-base">`;
             reportHtml += `<p><strong>Project Name:</strong> ${document.getElementById('projectName').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>Project Reference Number:</strong> ${document.getElementById('projectReferenceNumber').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Client Name:</strong> ${document.getElementById('clientName').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>Client Contact Details:</strong> ${document.getElementById('clientContactDetails').value || 'N/A'}</p>`;
             reportHtml += `<p class="md:col-span-2"><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>Local Government Area (LGA):</strong> ${document.getElementById('siteLGA').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Report Date:</strong> ${document.getElementById('reportDate').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locating Date(s):</strong> ${document.getElementById('locatingDate').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locator Name:</strong> ${document.getElementById('locatorName').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>Locator Certification Number:</strong> ${document.getElementById('locatorCertificationNumber').value || 'N/A'}</p>`;
 
             // Locator Accreditation Photo
             const locatorAccreditationImg = document.getElementById('locatorAccreditationPreview');
@@ -757,16 +956,19 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             const selectedEquipment = Array.from(document.getElementById('equipmentUsed').selectedOptions).map(option => option.value);
             reportHtml += `<p><strong>Equipment Used:</strong> ${selectedEquipment.join(', ') || 'N/A'}</p>`;
 
-            reportHtml += `<p><strong>Accuracy Achieved:</strong> ${document.getElementById('accuracyAchieved').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>Accuracy Achieved (AS 5488-2019 QL-B):</strong> ${document.getElementById('accuracyAchieved').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>DBYD Plans Provided:</strong> ${document.getElementById('dbydPlansProvided').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>DBYD Reference Number(s):</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'}</p>`;
-
-            // Removed DBYD PDF Link section as per user request
-
+            reportHtml += `<p><strong>DBYD Inquiry Date:</strong> ${document.getElementById('dbydInquiryDate').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Site Specific Plans Provided:</strong> ${document.getElementById('sitePlansProvided').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Site Plans Notes:</strong> ${document.getElementById('sitePlansNotes').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
+            reportHtml += `<p class="report-text-block mt-4"><strong>Site Context:</strong> ${document.getElementById('siteContext').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Project Scope/Purpose of Survey:</strong> ${document.getElementById('projectPurpose').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Survey Area Description:</strong> ${document.getElementById('surveyAreaDescription').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Environmental Considerations:</strong> ${document.getElementById('environmentalConsiderations').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
+
 
             // --- Quality Levels Explained ---
             reportHtml += `<div class="report-section">`;
@@ -821,7 +1023,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                     reportHtml += `<p class="report-text-block"><strong>Asset ID (AS 5488-2019):</strong> ${assetId}</p>`;
                     reportHtml += `<p class="report-text-block"><strong>Asset Owner:</strong> ${assetOwner}</p>`;
                     reportHtml += `<p class="report-text-block"><strong>Asset Status:</strong> ${assetStatus}</p>`;
-                    reportHtml += `<p class="report-text-block"><strong>Notes:</strong> ${notes}</p>`;
+                    reportHtml += `<p class="report-text-block"><strong>Description/Notes (e.g., condition, suspected service):</strong> ${notes}</p>`;
                     reportHtml += `</div>`;
                 });
                 reportHtml += `</div>`;
@@ -831,6 +1033,20 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 reportHtml += `<p class="report-text-block">No services recorded.</p>`;
                 reportHtml += `</div>`;
             }
+
+            // --- Critical Risks & Conflicts ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">Critical Risks & Conflicts</h2>`;
+            reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('criticalRisks').value || 'No critical risks or conflicts identified.'}</p>`;
+            reportHtml += `</div>`;
+
+            // --- Maps and Drawings References ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">Maps and Drawings References</h2>`;
+            reportHtml += `<p class="report-text-block"><strong>Site Plan/Map Reference:</strong> ${document.getElementById('mapReference').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>CAD/GIS File Reference:</strong> ${document.getElementById('cadGisFileReference').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>GPS/GNSS Coordinate Datum Note:</strong> ${document.getElementById('gpsDatumNote').value || 'N/A'}</p>`;
+            reportHtml += `</div>`;
 
             // --- Site Photos ---
             const photoEntries = document.querySelectorAll('#photoEntries .photo-entry');
@@ -862,6 +1078,10 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<h2 class="report-section-title">Safety & Damage Information</h2>`;
             reportHtml += `<p class="report-text-block"><strong>Duty of Care & Safety Documentation:</strong> All works were conducted with adherence to Duty of Care principles, utilising Safe Work Method Statements (SWMS) and/or Job Safety Analysis (JSA) to ensure safety for personnel, assets, and the public.</p>`;
             reportHtml += `<p class="report-text-block"><strong>Specific Safety Measures Taken During Works:</strong> ${document.getElementById('safetyMeasures').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Excavation Precautions (e.g., hand-digging guidelines):</strong> ${document.getElementById('excavationPrecautions').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Utility Owner Coordination Notes (for further verification):</strong> ${document.getElementById('utilityOwnerCoordinationNotes').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Permits and Approvals Required:</strong> ${document.getElementById('permitsApprovalsNotes').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Signage and Barriers Recommendations:</strong> ${document.getElementById('signageBarriersRecommendations').value || 'N/A'}</p>`;
             reportHtml += `<p class="report-text-block"><strong>Damage to Services Found During Locating:</strong> ${document.getElementById('damageFound').value || 'None reported.'}</p>`;
             reportHtml += `</div>`;
 
@@ -880,6 +1100,12 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('generalNotes').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
 
+            // --- Limitations of Survey ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">Limitations of Survey</h2>`;
+            reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('limitationsOfSurvey').value || 'No specific limitations reported.'}</p>`;
+            reportHtml += `</div>`;
+
             // --- Compliance with Australian Standard AS 5488-2019 (SUI) ---
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Compliance with Australian Standard AS 5488-2019 (SUI)</h2>`;
@@ -896,6 +1122,85 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `</ul>`;
             reportHtml += `<p class="mt-4">It is recommended that this report be read in conjunction with the full AS 5488-2019 standard for a complete understanding of SUI classification and management.</p>`;
             reportHtml += `</div>`;
+
+            // --- References ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">References</h2>`;
+            reportHtml += `<p class="report-text-block"><strong>Relevant Standards & Guidelines:</strong> ${document.getElementById('relevantStandardsNotes').value || 'N/A'}</p>`;
+            reportHtml += `<p class="report-text-block"><strong>DBYD Inquiry Number and Date:</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'} (Inquiry Date: ${document.getElementById('dbydInquiryDate').value || 'N/A'})</p>`;
+            reportHtml += `<p class="report-text-block"><strong>Local Council or Utility Provider Specific Requirements:</strong> ${document.getElementById('localCouncilUtilityRequirements').value || 'N/A'}</p>`;
+            reportHtml += `</div>`;
+
+            // --- Appendices ---
+            reportHtml += `<div class="report-section">`;
+            reportHtml += `<h2 class="report-section-title">Appendices</h2>`;
+            
+            // DBYD Plans
+            const dbydFiles = document.getElementById('dbydPlansUpload').files;
+            if (dbydFiles.length > 0) {
+                reportHtml += `<h3 class="report-subsection-title">DBYD Plans</h3>`;
+                Array.from(dbydFiles).forEach(file => {
+                    reportHtml += `<p class="report-text-block">${file.name} (File Type: ${file.type}, Size: ${(file.size / 1024).toFixed(2)} KB)</p>`;
+                });
+            } else {
+                reportHtml += `<h3 class="report-subsection-title">DBYD Plans</h3>`;
+                reportHtml += `<p class="report-text-block">No DBYD plans uploaded.</p>`;
+            }
+
+            // Raw Survey Data
+            const rawDataFiles = document.getElementById('rawDataUpload').files;
+            if (rawDataFiles.length > 0) {
+                reportHtml += `<h3 class="report-subsection-title">Raw Survey Data</h3>`;
+                Array.from(rawDataFiles).forEach(file => {
+                    reportHtml += `<p class="report-text-block">${file.name} (File Type: ${file.type}, Size: ${(file.size / 1024).toFixed(2)} KB)</p>`;
+                });
+            } else {
+                reportHtml += `<h3 class="report-subsection-title">Raw Survey Data</h3>`;
+                reportHtml += `<p class="report-text-block">No raw survey data uploaded.</p>`;
+            }
+
+            // Field Notes
+            const fieldNotesFiles = document.getElementById('fieldNotesUpload').files;
+            if (fieldNotesFiles.length > 0) {
+                reportHtml += `<h3 class="report-subsection-title">Field Notes/Sketches</h3>`;
+                Array.from(fieldNotesFiles).forEach(file => {
+                    reportHtml += `<p class="report-text-block">${file.name} (File Type: ${file.type}, Size: ${(file.size / 1024).toFixed(2)} KB)</p>`;
+                });
+            } else {
+                reportHtml += `<h3 class="report-subsection-title">Field Notes/Sketches</h3>`;
+                reportHtml += `<p class="report-text-block">No field notes/sketches uploaded.</p>`;
+            }
+
+            // Certificates
+            reportHtml += `<h3 class="report-subsection-title">Certificates</h3>`;
+            if (document.getElementById('locatorCertificationNumber').value) {
+                reportHtml += `<p class="report-text-block">Locator Certification Number: ${document.getElementById('locatorCertificationNumber').value}</p>`;
+            }
+            const accreditationImg = document.getElementById('locatorAccreditationPreview');
+            if (accreditationImg && accreditationImg.src && !accreditationImg.classList.contains('hidden')) {
+                reportHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="${accreditationImg.src}" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+            } else {
+                reportHtml += `<p class="report-text-block">Accreditation Certificate: Not provided.</p>`;
+            }
+
+            // Glossary
+            reportHtml += `<h3 class="report-subsection-title">Glossary</h3>`;
+            reportHtml += `<p class="report-text-block"><strong>QL-A:</strong> Quality Level A - Highest accuracy, visual confirmation via non-destructive digging.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>QL-B:</strong> Quality Level B - Locating via geophysical methods (e.g., EML, GPR) with specified accuracy range.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>QL-C:</strong> Quality Level C - Locating via surface features only.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>QL-D:</strong> Quality Level D - Locating via existing records/plans only.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>AS 5488.1-2019:</strong> Australian Standard for Classification of Subsurface Utility Information.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>DBYD:</strong> Dial Before You Dig - National referral service for identifying underground utilities.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>EML:</strong> Electromagnetic Location - Method using electromagnetic fields to detect metallic services.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>GPR:</strong> Ground-Penetrating Radar - Method using radar pulses to image the subsurface.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>NDD:</strong> Non-Destructive Digging - Excavation methods (e.g., vacuum excavation) that do not damage utilities.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>SWMS:</strong> Safe Work Method Statement - Document outlining high-risk work procedures.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>JSA:</strong> Job Safety Analysis - Method for breaking down tasks to identify hazards and controls.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>APWA Color Codes:</strong> Standardized color markings for different utility types.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>GDA2020/MGA Zone:</strong> Geocentric Datum of Australia 2020 / Map Grid of Australia Zone - Australian coordinate system.</p>`;
+            reportHtml += `</div>`;
+            reportHtml += `</div>`;
+
 
             // --- Final Disclaimer ---
             reportHtml += `<div class="disclaimer-box report-section">`; /* Added report-section class here too */
@@ -949,6 +1254,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             const formattedDate = `${yyyy}-${mm}-${dd}`;
             document.getElementById('reportDate').value = formattedDate;
             document.getElementById('locatingDate').value = formattedDate;
+            document.getElementById('dbydInquiryDate').value = formattedDate; // Set DBYD Inquiry Date too
 
             // Generate accuracy options on load
             generateAccuracyOptions();
