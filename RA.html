@@ -519,146 +519,158 @@
 
         // Function to generate the report content
         function generateAssessment() {
+            console.log("Generate Assessment button clicked.");
             const outputDiv = document.getElementById('reportOutput');
             let assessmentHtml = '';
 
-            const companyName = document.getElementById('companyName').value || 'Your Company Name';
-            const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
-            const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
+            try {
+                const companyName = document.getElementById('companyName').value || 'Your Company Name';
+                const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
+                const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
 
-            // --- Header ---
-            assessmentHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
-            assessmentHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`;
-            assessmentHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">Digital Risk Assessment</h1>`;
-            assessmentHtml += `<h2 class="text-2xl text-gray-600 mb-8">Onsite Hazard Identification & Control</h2>`;
-            assessmentHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
-            assessmentHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
-            assessmentHtml += `<p class="text-md text-gray-600 mb-8">Assessment Date: ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
-            assessmentHtml += `<div class="mt-auto text-gray-700 text-base">`;
-            assessmentHtml += `<p>Assessor: ${document.getElementById('assessorName').value || 'N/A'}</p>`;
-            assessmentHtml += `<p>${companyContact}</p>`;
-            assessmentHtml += `</div>`;
-            assessmentHtml += `<img src="certloc_logo.png" alt="CERTLOC Logo" class="absolute bottom-4 right-4" style="max-width: 80px; height: auto;">`;
-            assessmentHtml += `</div>`;
-
-            // --- Project & Assessment Details ---
-            assessmentHtml += `<div class="report-section">`;
-            assessmentHtml += `<h2 class="report-section-title">Project & Assessment Details</h2>`;
-            assessmentHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-base">`;
-            assessmentHtml += `<p><strong>Project Name:</strong> ${document.getElementById('projectName').value || 'N/A'}</p>`;
-            assessmentHtml += `<p><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
-            assessmentHtml += `<p><strong>Assessment Date:</strong> ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
-            assessmentHtml += `<p><strong>Assessor Name:</strong> ${document.getElementById('assessorName').value || 'N/A'}</p>`;
-            assessmentHtml += `<p class="md:col-span-2"><strong>Description of Task/Work:</strong> ${document.getElementById('taskDescription').value || 'N/A'}</p>`;
-            assessmentHtml += `</div>`;
-            assessmentHtml += `</div>`;
-
-            // --- Risk Matrix Guide ---
-            assessmentHtml += `<div class="report-section">`;
-            assessmentHtml += `<h2 class="report-section-title">Risk Matrix Guide</h2>`;
-            assessmentHtml += `<p class="report-text-block">This assessment uses a simple risk matrix. Assess each hazard by its <strong>Likelihood</strong> and <strong>Consequence</strong> to determine the <strong>Initial Risk Rating</strong>. Then, identify <strong>Control Measures</strong> and determine the <strong>Residual Risk Rating</strong> after controls are applied.</p>`;
-            assessmentHtml += `<div class="grid grid-cols-2 gap-4 text-sm mt-4">`;
-            assessmentHtml += `<div><strong>Likelihood:</strong><ul class="list-disc list-inside ml-4"><li>Almost Certain (5)</li><li>Likely (4)</li><li>Possible (3)</li><li>Unlikely (2)</li><li>Rare (1)</li></ul></div>`;
-            assessmentHtml += `<div><strong>Consequence:</strong><ul class="list-disc list-inside ml-4"><li>Catastrophic (5)</li><li>Major (4)</li><li>Moderate (3)</li><li>Minor (2)</li><li>Insignificant (1)</li></ul></div>`;
-            assessmentHtml += `</div>`;
-            assessmentHtml += `<p class="report-text-block mt-4"><strong>Risk Rating = Likelihood x Consequence</strong></p>`;
-            assessmentHtml += `<div class="grid grid-cols-4 gap-2 text-center text-sm mt-2">`;
-            assessmentHtml += `<div class="risk-level-low">1-5: Low Risk</div>`;
-            assessmentHtml += `<div class="risk-level-medium">6-10: Medium Risk</div>`;
-            assessmentHtml += `<div class="risk-level-high">11-15: High Risk</div>`;
-            assessmentHtml += `<div class="risk-level-extreme">16-25: Extreme Risk</div>`;
-            assessmentHtml += `</div>`;
-            assessmentHtml += `</div>`;
-
-            // --- Hazard Identification & Risk Control ---
-            const riskEntries = document.querySelectorAll('#riskEntries .risk-entry');
-            if (riskEntries.length > 0) {
-                assessmentHtml += `<div class="report-section">`;
-                assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
-                riskEntries.forEach((entry, index) => {
-                    const hazard = entry.querySelector('.hazard-description').value || 'N/A';
-                    const initialLikelihood = entry.querySelector('.initial-likelihood').value;
-                    const initialConsequence = entry.querySelector('.initial-consequence').value;
-                    const controlMeasures = entry.querySelector('.control-measures').value || 'N/A';
-                    const residualLikelihood = entry.querySelector('.residual-likelihood').value;
-                    const residualConsequence = entry.querySelector('.residual-consequence').value;
-
-                    assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">`;
-                    assessmentHtml += `<h3 class="report-subsection-title">Hazard ${index + 1}: ${hazard}</h3>`;
-                    assessmentHtml += `<p class="report-text-block"><strong>Initial Risk:</strong></p>`;
-                    assessmentHtml += `<div class="risk-grid">`;
-                    assessmentHtml += `<div>Likelihood: ${initialLikelihood || 'N/A'}</div>`;
-                    assessmentHtml += `<div>Consequence: ${initialConsequence || 'N/A'}</div>`;
-                    assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(initialLikelihood, initialConsequence)}</div>`;
-                    assessmentHtml += `</div>`;
-                    assessmentHtml += `<p class="report-text-block mt-2"><strong>Control Measures:</strong> ${controlMeasures}</p>`;
-                    assessmentHtml += `<p class="report-text-block"><strong>Residual Risk:</strong></p>`;
-                    assessmentHtml += `<div class="risk-grid">`;
-                    assessmentHtml += `<div>Likelihood: ${residualLikelihood || 'N/A'}</div>`;
-                    assessmentHtml += `<div>Consequence: ${residualConsequence || 'N/A'}</div>`;
-                    assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(residualLikelihood, residualConsequence)}</div>`;
-                    assessmentHtml += `</div>`;
-                    assessmentHtml += `</div>`;
-                });
+                // --- Header ---
+                assessmentHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
+                assessmentHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`;
+                assessmentHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">Digital Risk Assessment</h1>`;
+                assessmentHtml += `<h2 class="text-2xl text-gray-600 mb-8">Onsite Hazard Identification & Control</h2>`;
+                assessmentHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
+                assessmentHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
+                assessmentHtml += `<p class="text-md text-gray-600 mb-8">Assessment Date: ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
+                assessmentHtml += `<div class="mt-auto text-gray-700 text-base">`;
+                assessmentHtml += `<p>Assessor: ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+                assessmentHtml += `<p>${companyContact}</p>`;
                 assessmentHtml += `</div>`;
-            } else {
-                assessmentHtml += `<div class="report-section">`;
-                assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
-                assessmentHtml += `<p class="report-text-block">No hazards identified.</p>`;
+                assessmentHtml += `<img src="certloc_logo.png" alt="CERTLOC Logo" class="absolute bottom-4 right-4" style="max-width: 80px; height: auto;">`;
                 assessmentHtml += `</div>`;
+
+                // --- Project & Assessment Details ---
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Project & Assessment Details</h2>`;
+                assessmentHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-base">`;
+                assessmentHtml += `<p><strong>Project Name:</strong> ${document.getElementById('projectName').value || 'N/A'}</p>`;
+                assessmentHtml += `<p><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
+                assessmentHtml += `<p><strong>Assessment Date:</strong> ${document.getElementById('assessmentDate').value || 'N/A'}</p>`;
+                assessmentHtml += `<p><strong>Assessor Name:</strong> ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+                assessmentHtml += `<p class="md:col-span-2"><strong>Description of Task/Work:</strong> ${document.getElementById('taskDescription').value || 'N/A'}</p>`;
+                assessmentHtml += `</div>`;
+                assessmentHtml += `</div>`;
+
+                // --- Risk Matrix Guide ---
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Risk Matrix Guide</h2>`;
+                assessmentHtml += `<p class="report-text-block">This assessment uses a simple risk matrix. Assess each hazard by its <strong>Likelihood</strong> and <strong>Consequence</strong> to determine the <strong>Initial Risk Rating</strong>. Then, identify <strong>Control Measures</strong> and determine the <strong>Residual Risk Rating</strong> after controls are applied.</p>`;
+                assessmentHtml += `<div class="grid grid-cols-2 gap-4 text-sm mt-4">`;
+                assessmentHtml += `<div><strong>Likelihood:</strong><ul class="list-disc list-inside ml-4"><li>Almost Certain (5)</li><li>Likely (4)</li><li>Possible (3)</li><li>Unlikely (2)</li><li>Rare (1)</li></ul></div>`;
+                assessmentHtml += `<div><strong>Consequence:</strong><ul class="list-disc list-inside ml-4"><li>Catastrophic (5)</li><li>Major (4)</li><li>Moderate (3)</li><li>Minor (2)</li><li>Insignificant (1)</li></ul></div>`;
+                assessmentHtml += `</div>`;
+                assessmentHtml += `<p class="report-text-block mt-4"><strong>Risk Rating = Likelihood x Consequence</strong></p>`;
+                assessmentHtml += `<div class="grid grid-cols-4 gap-2 text-center text-sm mt-2">`;
+                assessmentHtml += `<div class="risk-level-low">1-5: Low Risk</div>`;
+                assessmentHtml += `<div class="risk-level-medium">6-10: Medium Risk</div>`;
+                assessmentHtml += `<div class="risk-level-high">11-15: High Risk</div>`;
+                assessmentHtml += `<div class="risk-level-extreme">16-25: Extreme Risk</div>`;
+                assessmentHtml += `</div>`;
+                assessmentHtml += `</div>`;
+
+                // --- Hazard Identification & Risk Control ---
+                const riskEntries = document.querySelectorAll('#riskEntries .risk-entry');
+                if (riskEntries.length > 0) {
+                    assessmentHtml += `<div class="report-section">`;
+                    assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
+                    riskEntries.forEach((entry, index) => {
+                        const hazard = entry.querySelector('.hazard-description').value || 'N/A';
+                        const initialLikelihood = entry.querySelector('.initial-likelihood').value;
+                        const initialConsequence = entry.querySelector('.initial-consequence').value;
+                        const controlMeasures = entry.querySelector('.control-measures').value || 'N/A';
+                        const residualLikelihood = entry.querySelector('.residual-likelihood').value;
+                        const residualConsequence = entry.querySelector('.residual-consequence').value;
+
+                        assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">`;
+                        assessmentHtml += `<h3 class="report-subsection-title">Hazard ${index + 1}: ${hazard}</h3>`;
+                        assessmentHtml += `<p class="report-text-block"><strong>Initial Risk:</strong></p>`;
+                        assessmentHtml += `<div class="risk-grid">`;
+                        assessmentHtml += `<div>Likelihood: ${initialLikelihood || 'N/A'}</div>`;
+                        assessmentHtml += `<div>Consequence: ${initialConsequence || 'N/A'}</div>`;
+                        assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(initialLikelihood, initialConsequence)}</div>`;
+                        assessmentHtml += `</div>`;
+                        assessmentHtml += `<p class="report-text-block mt-2"><strong>Control Measures:</strong> ${controlMeasures}</p>`;
+                        assessmentHtml += `<p class="report-text-block"><strong>Residual Risk:</strong></p>`;
+                        assessmentHtml += `<div class="risk-grid">`;
+                        assessmentHtml += `<div>Likelihood: ${residualLikelihood || 'N/A'}</div>`;
+                        assessmentHtml += `<div>Consequence: ${residualConsequence || 'N/A'}</div>`;
+                        assessmentHtml += `<div class="md:col-span-2">Rating: ${calculateRiskRating(residualLikelihood, residualConsequence)}</div>`;
+                        assessmentHtml += `</div>`;
+                        assessmentHtml += `</div>`;
+                    });
+                    assessmentHtml += `</div>`;
+                } else {
+                    assessmentHtml += `<div class="report-section">`;
+                    assessmentHtml += `<h2 class="report-section-title">Hazard Identification & Risk Control</h2>`;
+                    assessmentHtml += `<p class="report-text-block">No hazards identified.</p>`;
+                    assessmentHtml += `</div>`;
+                }
+
+                // --- Site Photos ---
+                const photoEntries = document.querySelectorAll('#photoEntries .photo-entry');
+                if (photoEntries.length > 0) {
+                    assessmentHtml += `<div class="report-section">`;
+                    assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
+                    photoEntries.forEach((entry, index) => {
+                        const imgElement = entry.querySelector('.photo-preview');
+                        const caption = entry.querySelector('.photo-caption').value || 'No caption';
+                        assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50 text-center">`;
+                        assessmentHtml += `<h3 class="report-subsection-title">Photo ${index + 1}: ${caption}</h3>`;
+                        if (imgElement && imgElement.src && !imgElement.classList.contains('hidden')) {
+                            assessmentHtml += `<img src="${imgElement.src}" alt="${caption}" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 350px;">`;
+                        } else {
+                            assessmentHtml += `<p class="text-red-500">Image not available for display.</p>`;
+                        }
+                        assessmentHtml += `</div>`;
+                    });
+                    assessmentHtml += `</div>`;
+                } else {
+                    assessmentHtml += `<div class="report-section">`;
+                    assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
+                    assessmentHtml += `<p class="report-text-block">No photos attached.</p>`;
+                    assessmentHtml += `</div>`;
+                }
+
+                // --- Overall Risk Assessment Summary ---
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Overall Risk Assessment Summary</h2>`;
+                assessmentHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('overallSummary').value || 'No overall summary provided.'}</p>`;
+                assessmentHtml += `</div>`;
+
+                // --- Assessor Sign-off ---
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Assessor Sign-off</h2>`;
+                assessmentHtml += `<p class="report-text-block"><strong>Assessor Name:</strong> ${document.getElementById('assessorSignatureName').value || 'N/A'}</p>`;
+                assessmentHtml += `<p class="report-text-block"><strong>Sign-off Date:</strong> ${document.getElementById('signOffDate').value || 'N/A'}</p>`;
+                assessmentHtml += `<p class="report-text-block mt-4"><em>This digital assessment serves as a record of the onsite risk identification and control measures implemented at the time of assessment.</em></p>`;
+                assessmentHtml += `</div>`;
+
+                // --- Appendices (Certificate) ---
+                assessmentHtml += `<div class="report-section">`;
+                assessmentHtml += `<h2 class="report-section-title">Appendices</h2>`;
+                assessmentHtml += `<h3 class="report-subsection-title">Certificates</h3>`;
+                // Note: locatorCertificationNumber is not directly in this form, assuming it's pre-filled or will be added manually if needed.
+                // For now, I'll hardcode it as per previous discussion for consistency if it's always the same.
+                assessmentHtml += `<p class="report-text-block">Locator Certification Number: 00004732</p>`; // Hardcoded for consistency with report
+                assessmentHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+                assessmentHtml += `</div>`;
+
+
+                outputDiv.innerHTML = assessmentHtml;
+                outputDiv.classList.remove('hidden');
+                console.log("Attempting to print...");
+                window.print();
+                console.log("Print dialog should have appeared.");
+
+            } catch (error) {
+                console.error("Error generating assessment:", error);
+                outputDiv.innerHTML = `<p class="text-red-500">An error occurred while generating the assessment. Please check the console for details: ${error.message}</p>`;
+                outputDiv.classList.remove('hidden');
             }
-
-            // --- Site Photos ---
-            const photoEntries = document.querySelectorAll('#photoEntries .photo-entry');
-            if (photoEntries.length > 0) {
-                assessmentHtml += `<div class="report-section">`;
-                assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
-                photoEntries.forEach((entry, index) => {
-                    const imgElement = entry.querySelector('.photo-preview');
-                    const caption = entry.querySelector('.photo-caption').value || 'No caption';
-                    assessmentHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50 text-center">`;
-                    assessmentHtml += `<h3 class="report-subsection-title">Photo ${index + 1}: ${caption}</h3>`;
-                    if (imgElement && imgElement.src && !imgElement.classList.contains('hidden')) {
-                        assessmentHtml += `<img src="${imgElement.src}" alt="${caption}" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 350px;">`;
-                    } else {
-                        assessmentHtml += `<p class="text-red-500">Image not available for display.</p>`;
-                    }
-                    assessmentHtml += `</div>`;
-                });
-                assessmentHtml += `</div>`;
-            } else {
-                assessmentHtml += `<div class="report-section">`;
-                assessmentHtml += `<h2 class="report-section-title">Site Photos</h2>`;
-                assessmentHtml += `<p class="report-text-block">No photos attached.</p>`;
-                assessmentHtml += `</div>`;
-            }
-
-            // --- Overall Risk Assessment Summary ---
-            assessmentHtml += `<div class="report-section">`;
-            assessmentHtml += `<h2 class="report-section-title">Overall Risk Assessment Summary</h2>`;
-            assessmentHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('overallSummary').value || 'No overall summary provided.'}</p>`;
-            assessmentHtml += `</div>`;
-
-            // --- Assessor Sign-off ---
-            assessmentHtml += `<div class="report-section">`;
-            assessmentHtml += `<h2 class="report-section-title">Assessor Sign-off</h2>`;
-            assessmentHtml += `<p class="report-text-block"><strong>Assessor Name:</strong> ${document.getElementById('assessorSignatureName').value || 'N/A'}</p>`;
-            assessmentHtml += `<p class="report-text-block"><strong>Sign-off Date:</strong> ${document.getElementById('signOffDate').value || 'N/A'}</p>`;
-            assessmentHtml += `<p class="report-text-block mt-4"><em>This digital assessment serves as a record of the onsite risk identification and control measures implemented at the time of assessment.</em></p>`;
-            assessmentHtml += `</div>`;
-
-            // --- Appendices (Certificate) ---
-            assessmentHtml += `<div class="report-section">`;
-            assessmentHtml += `<h2 class="report-section-title">Appendices</h2>`;
-            assessmentHtml += `<h3 class="report-subsection-title">Certificates</h3>`;
-            assessmentHtml += `<p class="report-text-block">Locator Certification Number: ${document.getElementById('locatorCertificationNumber').value || 'N/A'}</p>`;
-            assessmentHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
-            assessmentHtml += `</div>`;
-
-
-            outputDiv.innerHTML = assessmentHtml;
-            outputDiv.classList.remove('hidden');
-            window.print();
         }
 
         window.onload = function() {
