@@ -407,6 +407,7 @@
                     <label for="equipmentUsed">Equipment Used:</label>
                     <select id="equipmentUsed" multiple class="form-multiselect h-32">
                         <option value="RD8200 (Radio Detection)">RD8200 (Radio Detection)</option>
+                        <option value="RD8100 (Radio Detection)">RD8100 (Radio Detection)</option>
                         <option value="RD7100 (Radio Detection)">RD7100 (Radio Detection)</option>
                         <option value="GPR (Ground Penetrating Radar)">GPR (Ground Penetrating Radar)</option>
                         <option value="Vivax Metrotech vLoc3-Pro">Vivax Metrotech vLoc3-Pro</option>
@@ -418,6 +419,7 @@
                         <option value="Vaccum Excavator/NDD (Non-Destructive Digging)">Vaccum Excavator/NDD (Non-Destructive Digging)</option>
                         <option value="CCTV Camera">CCTV Camera</option>
                         <option value="Acoustic Leak Detector">Acoustic Leak Detector</option>
+                        <option value="Transponder Locator">Transponder Locator</option>
                         <option value="Eos Arrow Gold (GPS/GNSS)">Eos Arrow Gold (GPS/GNSS)</option>
                         <option value="Trimble R10 (GPS/GNSS)">Trimble R10 (GPS/GNSS)</option>
                         <option value="Other">Other</option>
@@ -431,7 +433,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="dbydPlansProvided">DBYD Plans Provided?</label>
+                    <label for="dbydPlansProvided">BYDA Plans Provided?</label>
                     <select id="dbydPlansProvided">
                         <option value="N/A">N/A</option>
                         <option value="Yes">Yes</option>
@@ -439,11 +441,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="dbydRefNumbers">DBYD Reference Number(s):</label>
+                    <label for="dbydRefNumbers">BYDA Reference Number(s):</label>
                     <input type="text" id="dbydRefNumbers" placeholder="e.g., 1234567890">
                 </div>
                 <div class="form-group">
-                    <label for="dbydInquiryDate">DBYD Inquiry Date:</label>
+                    <label for="dbydInquiryDate">BYDA Inquiry Date:</label>
                     <input type="date" id="dbydInquiryDate">
                 </div>
                 <div class="form-group">
@@ -487,7 +489,7 @@
                 <p class="mb-2"><strong>QUALITY LEVEL A (QLA):</strong> Visualization/Confirmation of a service, position, and depth, by non-destructive digging methods or points of entry to pits or manholes. Recommended Quality Level prior to construction or excavation.</p>
                 <p class="mb-2"><strong>QUALITY LEVEL B (QLB):</strong> Locating of services using radio detection methods. Acceptable range of accuracy for Quality Level B is +/-300mm for position and +/-500mm for depth.</p>
                 <p class="mb-2"><strong>QUALITY LEVEL C (QLC):</strong> Services marked out using only surface features in the field. Surface features include hydrants, gas markers, pits etc. No indication of service location or depth can be attained from Quality Level C.</p>
-                <p class="mb-2"><strong>QUALITY LEVEL D (QLD):</strong> Services marked out using DBYD plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.</p>
+                <p class="mb-2"><strong>QUALITY LEVEL D (QLD):</strong> Services marked out using BYDA plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.</p>
             </div>
 
             <h2 class="section-title">Marking Colour Legend (AS 5488-2019)</h2>
@@ -633,7 +635,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             <p class="text-sm text-gray-600 mb-4">Upload relevant supporting documents here.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="form-group">
-                    <label for="dbydPlansUpload">DBYD Plans (PDF/Image):</label>
+                    <label for="dbydPlansUpload">BYDA Plans (PDF/Image):</label>
                     <input type="file" id="dbydPlansUpload" accept=".pdf,image/*" multiple onchange="previewFiles(event, 'dbydPlansPreview')">
                     <div id="dbydPlansPreview" class="mt-2 grid grid-cols-2 gap-2"></div>
                 </div>
@@ -662,7 +664,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 <p class="report-text-block"><strong>QL-C:</strong> Quality Level C - Locating via surface features only.</p>
                 <p class="report-text-block"><strong>QL-D:</strong> Quality Level D - Locating via existing records/plans only.</p>
                 <p class="report-text-block"><strong>AS 5488.1-2019:</strong> Australian Standard for Classification of Subsurface Utility Information.</p>
-                <p class="report-text-block"><strong>DBYD:</strong> Dial Before You Dig - National referral service for identifying underground utilities.</p>
+                <p class="report-text-block"><strong>BYDA:</strong> Before You Dig Australia - National referral service for identifying underground utilities.</p>
                 <p class="report-text-block"><strong>EML:</strong> Electromagnetic Location - Method using electromagnetic fields to detect metallic services.</p>
                 <p class="report-text-block"><strong>GPR:</strong> Ground-Penetrating Radar - Method using radar pulses to image the subsurface.</p>
                 <p class="report-text-block"><strong>NDD:</strong> Non-Destructive Digging - Excavation methods (e.g., vacuum excavation) that do not damage utilities.</p>
@@ -670,6 +672,24 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 <p class="report-text-block"><strong>JSA:</strong> Job Safety Analysis - Method for breaking down tasks to identify hazards and controls.</p>
                 <p class="report-text-block"><strong>APWA Color Codes:</strong> Standardized color markings for different utility types.</p>
                 <p class="report-text-block"><strong>GDA2020/MGA Zone:</strong> Geocentric Datum of Australia 2020 / Map Grid of Australia Zone - Australian coordinate system.</p>
+            </div>
+
+            <h2 class="section-title">Useful Links & Resources</h2>
+            <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <p class="report-text-block">Below are links to key resources and asset owners in Australia, particularly relevant for NSW. These provide essential information for safe work near utilities.</p>
+                <ul class="list-disc list-inside ml-4 mt-2">
+                    <li class="report-list-item"><strong>Before You Dig Australia (BYDA):</strong> <a href="https://www.byda.com.au/" target="_blank" class="text-blue-600 underline">www.byda.com.au</a> (Mandatory inquiry service before any excavation)</li>
+                    <li class="report-list-item"><strong>SafeWork NSW:</strong> <a href="https://www.safework.nsw.gov.au/" target="_blank" class="text-blue-600 underline">www.safework.nsw.gov.au</a> (Work Health and Safety regulations and guidelines)</li>
+                    <li class="report-list-item"><strong>Sydney Water:</strong> <a href="https://www.sydneywater.com.au/" target="_blank" class="text-blue-600 underline">www.sydneywater.com.au</a> (Water and sewer services in Sydney, Illawarra, Blue Mountains)</li>
+                    <li class="report-list-item"><strong>Essential Energy:</strong> <a href="https://www.essentialenergy.com.au/" target="_blank" class="text-blue-600 underline">www.essentialenergy.com.au</a> (Electricity network in regional NSW)</li>
+                    <li class="report-list-item"><strong>Ausgrid:</strong> <a href="https://www.ausgrid.com.au/" target="_blank" class="text-blue-600 underline">www.ausgrid.com.au</a> (Electricity network in Sydney, Central Coast, Hunter)</li>
+                    <li class="report-list-item"><strong>Jemena (Gas & Electricity):</strong> <a href="https://jemena.com.au/" target="_blank" class="text-blue-600 underline">jemena.com.au</a> (Gas and some electricity networks in parts of NSW)</li>
+                    <li class="report-list-item"><strong>NBN Co:</strong> <a href="https://www.nbnco.com.au/" target="_blank" class="text-blue-600 underline">www.nbnco.com.au</a> (National Broadband Network infrastructure)</li>
+                    <li class="report-list-item"><strong>Telstra:</strong> <a href="https://www.telstra.com.au/" target="_blank" class="text-blue-600 underline">www.telstra.com.au</a> (Telecommunications infrastructure)</li>
+                    <li class="report-list-item"><strong>Optus:</strong> <a href="https://www.optus.com.au/" target="_blank" class="text-blue-600 underline">www.optus.com.au</a> (Telecommunications infrastructure)</li>
+                    <li class="report-list-item"><strong>Local Council Websites:</strong> (Refer to specific local council for their asset information and requirements)</li>
+                </ul>
+                <p class="report-text-block mt-2">Always consult the latest information directly from the asset owners and regulatory bodies before commencing any work.</p>
             </div>
 
 
@@ -909,8 +929,8 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             // --- Report Header / Cover Page ---
             reportHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
             reportHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`; /* Larger for cover */
-            reportHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">${companyName}</h1>`;
-            reportHtml += `<h2 class="text-2xl text-gray-600 mb-8">Utility Locating Report</h2>`;
+            reportHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">Service Locating and Hydro Excavation Services</h1>`; /* Updated title */
+            reportHtml += `<h2 class="text-2xl text-gray-600 mb-8">Utility Locating Report</h2>`; /* Sub-title */
             reportHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
             reportHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
             reportHtml += `<p class="text-md text-gray-600 mb-8">Report Date: ${document.getElementById('reportDate').value || 'N/A'}</p>`;
@@ -939,7 +959,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
 
             // Initial Disclaimer (after Executive Summary)
             reportHtml += `<div class="report-section disclaimer-box mb-8">`;
-            reportHtml += `<p>The following report is an accumulation of information gathered from in-field investigations at the time of the report and any changes of assets in the field cannot be accounted for. It is recommended that services be potholed for confirmation prior to any construction or excavations and a Quality Level A be achieved. This report does not replace the need for valid Dial Before You Dig (DBYD) plans to be always on site.</p>`;
+            reportHtml += `<p>The following report is an accumulation of information gathered from in-field investigations at the time of the report and any changes of assets in the field cannot be accounted for. It is recommended that services be potholed for confirmation prior to any construction or excavations and a Quality Level A be achieved. This report does not replace the need for valid Dial Before You Dig (BYDA) plans to be always on site.</p>`; /* Updated DBYD to BYDA */
             reportHtml += `</div>`;
 
 
@@ -965,9 +985,9 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p><strong>Equipment Used:</strong> ${selectedEquipment.join(', ') || 'N/A'}</p>`;
 
             reportHtml += `<p><strong>Accuracy Achieved (AS 5488-2019 QL-B):</strong> ${document.getElementById('accuracyAchieved').value || 'N/A'}</p>`;
-            reportHtml += `<p><strong>DBYD Plans Provided:</strong> ${document.getElementById('dbydPlansProvided').value || 'N/A'}</p>`;
-            reportHtml += `<p><strong>DBYD Reference Number(s):</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'}</p>`;
-            reportHtml += `<p><strong>DBYD Inquiry Date:</strong> ${document.getElementById('dbydInquiryDate').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>BYDA Plans Provided:</strong> ${document.getElementById('dbydPlansProvided').value || 'N/A'}</p>`; /* Updated DBYD to BYDA */
+            reportHtml += `<p><strong>BYDA Reference Number(s):</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'}</p>`; /* Updated DBYD to BYDA */
+            reportHtml += `<p><strong>BYDA Inquiry Date:</strong> ${document.getElementById('dbydInquiryDate').value || 'N/A'}</p>`; /* Updated DBYD to BYDA */
             reportHtml += `<p><strong>Site Specific Plans Provided:</strong> ${document.getElementById('sitePlansProvided').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Site Plans Notes:</strong> ${document.getElementById('sitePlansNotes').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
@@ -984,7 +1004,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p class="report-text-block"><strong>QUALITY LEVEL A (QLA):</strong> Visualization/Confirmation of a service, position, and depth, by non-destructive digging methods or points of entry to pits or manholes. Recommended Quality Level prior to construction or excavation.</p>`;
             reportHtml += `<p class="report-text-block"><strong>QUALITY LEVEL B (QLB):</strong> Locating of services using radio detection methods. Acceptable range of accuracy for Quality Level B is +/-300mm for position and +/-500mm for depth.</p>`;
             reportHtml += `<p class="report-text-block"><strong>QUALITY LEVEL C (QLC):</strong> Services marked out using only surface features in the field. Surface features include hydrants, gas markers, pits etc. No indication of service location or depth can be attained from Quality Level C.</p>`;
-            reportHtml += `<p class="report-text-block"><strong>QUALITY LEVEL D (QLD):</strong> Services marked out using DBYD plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>QUALITY LEVEL D (QLD):</strong> Services marked out using BYDA plans only. Offsets on plans can be used to obtain such indication of services in field but no indication of service confirmation can be given from Quality Level D.</p>`; /* Updated DBYD to BYDA */
             reportHtml += `</div>`;
 
             // --- Marking Colour Legend ---
@@ -1135,7 +1155,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">References</h2>`;
             reportHtml += `<p class="report-text-block"><strong>Relevant Standards & Guidelines:</strong> ${document.getElementById('relevantStandardsNotes').value || 'N/A'}</p>`;
-            reportHtml += `<p class="report-text-block"><strong>DBYD Inquiry Number and Date:</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'} (Inquiry Date: ${document.getElementById('dbydInquiryDate').value || 'N/A'})</p>`;
+            reportHtml += `<p class="report-text-block"><strong>BYDA Inquiry Number and Date:</strong> ${document.getElementById('dbydRefNumbers').value || 'N/A'} (Inquiry Date: ${document.getElementById('dbydInquiryDate').value || 'N/A'})</p>`; /* Updated DBYD to BYDA */
             reportHtml += `<p class="report-text-block"><strong>Local Council or Utility Provider Specific Requirements:</strong> ${document.getElementById('localCouncilUtilityRequirements').value || 'N/A'}</p>`;
             reportHtml += `</div>`;
 
@@ -1143,16 +1163,16 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<div class="report-section">`;
             reportHtml += `<h2 class="report-section-title">Appendices</h2>`;
             
-            // DBYD Plans
+            // BYDA Plans
             const dbydFiles = document.getElementById('dbydPlansUpload').files;
             if (dbydFiles.length > 0) {
-                reportHtml += `<h3 class="report-subsection-title">DBYD Plans</h3>`;
+                reportHtml += `<h3 class="report-subsection-title">BYDA Plans</h3>`; /* Updated DBYD to BYDA */
                 Array.from(dbydFiles).forEach(file => {
                     reportHtml += `<p class="report-text-block">${file.name} (File Type: ${file.type}, Size: ${(file.size / 1024).toFixed(2)} KB)</p>`;
                 });
             } else {
-                reportHtml += `<h3 class="report-subsection-title">DBYD Plans</h3>`;
-                reportHtml += `<p class="report-text-block">No DBYD plans uploaded.</p>`;
+                reportHtml += `<h3 class="report-subsection-title">BYDA Plans</h3>`; /* Updated DBYD to BYDA */
+                reportHtml += `<p class="report-text-block">No BYDA plans uploaded.</p>`;
             }
 
             // Raw Survey Data
@@ -1194,7 +1214,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p class="report-text-block"><strong>QL-C:</strong> Quality Level C - Locating via surface features only.</p>`;
             reportHtml += `<p class="report-text-block"><strong>QL-D:</strong> Quality Level D - Locating via existing records/plans only.</p>`;
             reportHtml += `<p class="report-text-block"><strong>AS 5488.1-2019:</strong> Australian Standard for Classification of Subsurface Utility Information.</p>`;
-            reportHtml += `<p class="report-text-block"><strong>DBYD:</strong> Dial Before You Dig - National referral service for identifying underground utilities.</p>`;
+            reportHtml += `<p class="report-text-block"><strong>BYDA:</strong> Before You Dig Australia - National referral service for identifying underground utilities.</p>`; /* Updated DBYD to BYDA */
             reportHtml += `<p class="report-text-block"><strong>EML:</strong> Electromagnetic Location - Method using electromagnetic fields to detect metallic services.</p>`;
             reportHtml += `<p class="report-text-block"><strong>GPR:</strong> Ground-Penetrating Radar - Method using radar pulses to image the subsurface.</p>`;
             reportHtml += `<p class="report-text-block"><strong>NDD:</strong> Non-Destructive Digging - Excavation methods (e.g., vacuum excavation) that do not damage utilities.</p>`;
@@ -1266,7 +1286,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             const formattedDate = `${yyyy}-${mm}-${dd}`;
             document.getElementById('reportDate').value = formattedDate;
             document.getElementById('locatingDate').value = formattedDate;
-            document.getElementById('dbydInquiryDate').value = formattedDate; // Set DBYD Inquiry Date too
+            document.getElementById('dbydInquiryDate').value = formattedDate; // Set BYDA Inquiry Date too
 
             // Generate accuracy options on load
             generateAccuracyOptions();
