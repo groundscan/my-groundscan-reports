@@ -367,8 +367,12 @@
                 <div class="form-group md:col-span-2">
                     <label for="siteAddress">Site Address/Location:</label>
                     <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123 DP 123456, Forest Road, Rockley NSW"></textarea>
-                    <button type="button" class="get-gps-button" onclick="getSiteAddressGPS()">Get Current GPS Location</button>
+                    <button type="button" class="get-gps-button" data-target-textarea="siteAddress" data-target-status="siteAddressGpsStatus">Get Current GPS Location</button>
                     <p id="siteAddressGpsStatus" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+                <div class="form-group">
+                    <label for="gpsDeviceUsed">GPS Device Used:</label>
+                    <input type="text" id="gpsDeviceUsed" placeholder="e.g., Eos Arrow Gold, iPad">
                 </div>
                 <div class="form-group">
                     <label for="siteLGA">Local Government Area (LGA):</label>
@@ -392,12 +396,7 @@
                 </div>
                 <div class="form-group">
                     <label for="locatorCertificationNumber">Locator Certification Number (e.g., CERTLOC CL-XXXX):</label>
-                    <input type="text" id="locatorCertificationNumber" placeholder="e.g., CERTLOC CL-1234">
-                </div>
-                <div class="form-group">
-                    <label for="permanentCertificateFileName">Permanent Certificate File Name (e.g., my_cert.png):</label>
-                    <input type="text" id="permanentCertificateFileName" placeholder="e.g., my_certloc_certificate.png">
-                    <p class="text-xs text-gray-500 mt-1">Leave blank to use uploaded image if available. File must be in same GitHub folder.</p>
+                    <input type="text" id="locatorCertificationNumber" value="00004732" placeholder="e.g., CERTLOC CL-1234">
                 </div>
                 <div class="form-group">
                     <label for="locatorAccreditation">Accreditation Certificate (Upload for temporary use):</label>
@@ -736,9 +735,12 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             );
         }
 
-        // Function for site address GPS
-        function getSiteAddressGPS() {
-            getGpsLocation('siteAddress', 'siteAddressGpsStatus');
+        // Function for site address GPS (now uses data attributes)
+        function handleGpsButtonClick(event) {
+            const button = event.target;
+            const targetTextareaId = button.dataset.targetTextarea;
+            const targetStatusId = button.dataset.targetStatus;
+            getGpsLocation(targetTextareaId, targetStatusId);
         }
 
         // Function to add a new service entry block
@@ -790,7 +792,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                 <div class="form-group">
                     <label>Location (Lat/Lon or Local Grid):</label>
                     <textarea class="service-location" rows="2" placeholder="e.g., -33.1234, 149.5678 or N: 12345, E: 67890"></textarea>
-                    <button type="button" class="get-gps-button" onclick="getGpsLocation('${entryId}_location', '${entryId}_locationStatus')">Get GPS</button>
+                    <button type="button" class="get-gps-button" data-target-textarea="${entryId}_location" data-target-status="${entryId}_locationStatus">Get GPS</button>
                     <p id="${entryId}_locationStatus" class="text-xs text-gray-500 mt-1"></p>
                 </div>
                 <div class="form-group">
@@ -950,28 +952,14 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p><strong>Client Name:</strong> ${document.getElementById('clientName').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Client Contact Details:</strong> ${document.getElementById('clientContactDetails').value || 'N/A'}</p>`;
             reportHtml += `<p class="md:col-span-2"><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
+            reportHtml += `<p><strong>GPS Device Used:</strong> ${document.getElementById('gpsDeviceUsed').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Local Government Area (LGA):</strong> ${document.getElementById('siteLGA').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Report Date:</strong> ${document.getElementById('reportDate').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locating Date(s):</strong> ${document.getElementById('locatingDate').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locator Name:</strong> ${document.getElementById('locatorName').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locator Certification Number:</strong> ${document.getElementById('locatorCertificationNumber').value || 'N/A'}</p>`;
-
-            // Locator Accreditation Photo / Permanent Certificate
-            const permanentCertFileName = document.getElementById('permanentCertificateFileName').value;
-            const locatorAccreditationImg = document.getElementById('locatorAccreditationPreview');
-            let certImageSrc = '';
-            if (permanentCertFileName) {
-                certImageSrc = permanentCertFileName;
-            } else if (locatorAccreditationImg && locatorAccreditationImg.src && !locatorAccreditationImg.classList.contains('hidden')) {
-                certImageSrc = locatorAccreditationImg.src;
-            }
-
-            if (certImageSrc) {
-                reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong><br><img src="${certImageSrc}" alt="Accreditation Certificate" class="mt-2 rounded-lg mx-auto max-w-full h-auto" style="max-height: 250px;"></p>`; /* Adjusted max-height */
-            } else {
-                reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong> Not provided.</p>`;
-            }
-
+            reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong> Refer to Appendices for full certificate image.</p>`; /* Simplified for main section */
+            
             // Equipment Used (multi-select)
             const selectedEquipment = Array.from(document.getElementById('equipmentUsed').selectedOptions).map(option => option.value);
             reportHtml += `<p><strong>Equipment Used:</strong> ${selectedEquipment.join(', ') || 'N/A'}</p>`;
@@ -1196,12 +1184,9 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             if (document.getElementById('locatorCertificationNumber').value) {
                 reportHtml += `<p class="report-text-block">Locator Certification Number: ${document.getElementById('locatorCertificationNumber').value}</p>`;
             }
-            if (certImageSrc) { // Re-using the logic from Project Info for consistency
-                reportHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="${certImageSrc}" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
-            } else {
-                reportHtml += `<p class="report-text-block">Accreditation Certificate: Not provided.</p>`;
-            }
-
+            // Hardcoded certificate image
+            reportHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+            
             // Glossary
             reportHtml += `<h3 class="report-subsection-title">Glossary</h3>`;
             reportHtml += `<p class="report-text-block"><strong>QL-A:</strong> Quality Level A - Highest accuracy, visual confirmation via non-destructive digging.</p>`;
@@ -1260,6 +1245,14 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                     event.target.closest('.photo-entry').remove();
                 }
             });
+
+            // Event delegation for all GPS buttons
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('get-gps-button')) {
+                    handleGpsButtonClick(event);
+                }
+            });
+
 
             // Initial Load: Add one service and one photo entry
             addServiceEntry();
