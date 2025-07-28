@@ -248,11 +248,15 @@
             .report-section {
                 page-break-inside: avoid; /* Keep entire sections together if possible */
                 page-break-after: auto; /* Allow sections to break after if needed */
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem; /* Reduced margin */
                 /* Force new page for major sections if content is substantial */
+                page-break-before: auto; /* Allow flow, not force new page */
+            }
+            /* Force Executive Summary to start on a new page */
+            .report-output #executiveSummarySection {
                 page-break-before: always;
             }
-            /* Override for the very first section so it doesn't start with a blank page */
+            /* Override for the very first section (Cover Page) so it doesn't start with a blank page */
             .report-output .report-section:first-of-type {
                 page-break-before: auto;
             }
@@ -260,28 +264,28 @@
             .report-section-title {
                 font-size: 1.5rem; /* Larger headings for print */
                 font-weight: bold;
-                margin-top: 1.5rem;
-                margin-bottom: 0.5rem;
+                margin-top: 1rem; /* Reduced margin */
+                margin-bottom: 0.4rem; /* Reduced margin */
                 color: #000;
                 border-bottom: 1px solid #000;
-                padding-bottom: 0.25rem;
+                padding-bottom: 0.2rem; /* Reduced padding */
                 page-break-after: avoid; /* Keep title with content */
             }
             .report-subsection-title {
                 font-size: 1.25rem;
                 font-weight: bold;
-                margin-top: 1rem;
-                margin-bottom: 0.5rem;
+                margin-top: 0.8rem; /* Reduced margin */
+                margin-bottom: 0.4rem; /* Reduced margin */
                 color: #000;
                 page-break-after: avoid; /* Keep subtitle with content */
             }
             .report-text-block {
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.3rem; /* Reduced margin */
                 page-break-inside: auto; /* Allow breaking inside long paragraphs */
             }
             .report-list-item {
-                margin-left: 1.5rem;
-                margin-bottom: 0.25rem;
+                margin-left: 1.2rem; /* Reduced margin */
+                margin-bottom: 0.15rem; /* Reduced margin */
             }
 
             /* NEW/REFINED: Specific rules for generated content blocks to avoid breaking */
@@ -391,7 +395,12 @@
                     <input type="text" id="locatorCertificationNumber" placeholder="e.g., CERTLOC CL-1234">
                 </div>
                 <div class="form-group">
-                    <label for="locatorAccreditation">Accreditation Certificate (Image):</label>
+                    <label for="permanentCertificateFileName">Permanent Certificate File Name (e.g., my_cert.png):</label>
+                    <input type="text" id="permanentCertificateFileName" placeholder="e.g., my_certloc_certificate.png">
+                    <p class="text-xs text-gray-500 mt-1">Leave blank to use uploaded image if available. File must be in same GitHub folder.</p>
+                </div>
+                <div class="form-group">
+                    <label for="locatorAccreditation">Accreditation Certificate (Upload for temporary use):</label>
                     <input type="file" id="locatorAccreditation" accept="image/*" onchange="previewImage(event, this, 'locatorAccreditationPreview')">
                     <img id="locatorAccreditationPreview" class="photo-preview mt-2 rounded-lg max-w-full h-auto hidden" style="max-height: 200px;">
                 </div>
@@ -643,6 +652,9 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <h3 class="report-subsection-title">Certificates</h3>
                 <p class="report-text-block">Proof of locator certification, including the accreditation certificate image and certification number provided in the Project & Site Information section.</p>
+                <div id="generatedCertificateImage" class="mt-2 text-center">
+                    <!-- Certificate image will be displayed here -->
+                </div>
             </div>
             <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <h3 class="report-subsection-title">Glossary</h3>
@@ -917,7 +929,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
 
 
             // --- Executive Summary ---
-            reportHtml += `<div class="report-section">`;
+            reportHtml += `<div class="report-section" id="executiveSummarySection">`; /* Added ID for specific page-break rule */
             reportHtml += `<h2 class="report-section-title">Executive Summary</h2>`;
             reportHtml += `<p class="report-text-block whitespace-pre-wrap">${document.getElementById('executiveSummary').value || 'No executive summary provided.'}</p>`;
             reportHtml += `</div>`;
@@ -944,10 +956,18 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             reportHtml += `<p><strong>Locator Name:</strong> ${document.getElementById('locatorName').value || 'N/A'}</p>`;
             reportHtml += `<p><strong>Locator Certification Number:</strong> ${document.getElementById('locatorCertificationNumber').value || 'N/A'}</p>`;
 
-            // Locator Accreditation Photo
+            // Locator Accreditation Photo / Permanent Certificate
+            const permanentCertFileName = document.getElementById('permanentCertificateFileName').value;
             const locatorAccreditationImg = document.getElementById('locatorAccreditationPreview');
-            if (locatorAccreditationImg && locatorAccreditationImg.src && !locatorAccreditationImg.classList.contains('hidden')) {
-                reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong><br><img src="${locatorAccreditationImg.src}" alt="Accreditation Certificate" class="mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;"></p>`;
+            let certImageSrc = '';
+            if (permanentCertFileName) {
+                certImageSrc = permanentCertFileName;
+            } else if (locatorAccreditationImg && locatorAccreditationImg.src && !locatorAccreditationImg.classList.contains('hidden')) {
+                certImageSrc = locatorAccreditationImg.src;
+            }
+
+            if (certImageSrc) {
+                reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong><br><img src="${certImageSrc}" alt="Accreditation Certificate" class="mt-2 rounded-lg mx-auto max-w-full h-auto" style="max-height: 250px;"></p>`; /* Adjusted max-height */
             } else {
                 reportHtml += `<p class="md:col-span-2"><strong>Accreditation Certificate:</strong> Not provided.</p>`;
             }
@@ -1059,7 +1079,7 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
                     reportHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50 text-center">`;
                     reportHtml += `<h3 class="report-subsection-title">Photo ${index + 1}: ${caption}</h3>`;
                     if (imgElement && imgElement.src && !imgElement.classList.contains('hidden')) {
-                        reportHtml += `<img src="${imgElement.src}" alt="${caption}" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 400px;">`; // Increased max-height for better print quality
+                        reportHtml += `<img src="${imgElement.src}" alt="${caption}" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 350px;">`; /* Adjusted max-height */
                     } else {
                         reportHtml += `<p class="text-red-500">Image not available for display in generated report (ensure image was uploaded and visible in form).</p>`;
                     }
@@ -1176,9 +1196,8 @@ Completed full sweep of area with EMI, completed full GPR sweep of area.
             if (document.getElementById('locatorCertificationNumber').value) {
                 reportHtml += `<p class="report-text-block">Locator Certification Number: ${document.getElementById('locatorCertificationNumber').value}</p>`;
             }
-            const accreditationImg = document.getElementById('locatorAccreditationPreview');
-            if (accreditationImg && accreditationImg.src && !accreditationImg.classList.contains('hidden')) {
-                reportHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="${accreditationImg.src}" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+            if (certImageSrc) { // Re-using the logic from Project Info for consistency
+                reportHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="${certImageSrc}" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
             } else {
                 reportHtml += `<p class="report-text-block">Accreditation Certificate: Not provided.</p>`;
             }
