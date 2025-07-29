@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital SWMS - GROUNDSCAN</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        #certlocLogo {
+            max-width: 100px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        .header .left-spacer {
+            width: 100px;
+            flex-shrink: 0;
+        }
+        .header .company-info {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ebf4ff;
+        }
+        input[type="text"], input[type="date"], input[type="time"], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus, select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.25);
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .add-button {
+            background-color: #4299e1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .add-button:hover {
+            background-color: #3182ce;
+        }
+        .remove-button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.875rem;
+        }
+        .remove-button:hover {
+            background-color: #c53030;
+        }
+        .task-step-entry {
+            border: 1px solid #ebf4ff;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .print-button {
+            background-color: #38a169;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .print-button:hover {
+            background-color: #2f855a;
+        }
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 8px;
+            font-weight: normal;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        .signature-area {
+            border: 1px dashed #cbd5e0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-style: italic;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #edf2f7;
+        }
+        .signature-area.signed {
+            border-style: solid;
+            border-color: #4299e1;
+            color: #2b6cb0;
+        }
+
+        /* --- Print Specific Styles --- */
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .report-output {
+                border: none;
+                background-color: #ffffff;
+                padding: 0;
+                margin-top: 0;
+                display: block !important;
+                width: 100%;
+            }
+            input, textarea, select, button {
+                border: none !important;
+                box-shadow: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .form-group label {
+                font-weight: normal;
+                color: #000;
+            }
+            .task-step-entry {
+                border: 1px solid #e2e8f0;
+                background-color: #ffffff;
+                padding: 10px;
+                margin-bottom: 8px;
+                page-break-inside: avoid; /* Keep entries together */
+            }
+            .header {
+                border-bottom: 1px solid #000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 16px;
+                margin-bottom: 24px;
+            }
+            .header .company-info {
+                flex-grow: 1;
+                text-align: center;
+            }
+            .header .left-spacer, .header #certlocLogo {
+                visibility: visible;
+                display: block;
+            }
+            h1, h2, h3 {
+                color: #000 !important;
+            }
+            .report-section {
+                margin-bottom: 0.5rem;
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            .report-section-title {
+                font-size: 1.4rem;
+                margin-top: 0.8rem;
+                margin-bottom: 0.3rem;
+                padding-bottom: 0.1rem;
+            }
+            .report-subsection-title {
+                font-size: 1.1rem;
+                margin-top: 0.6rem;
+                margin-bottom: 0.3rem;
+            }
+            .report-text-block {
+                margin-bottom: 0.2rem;
+            }
+            .report-output img {
+                max-height: 300px;
+            }
+            .checkbox-group label {
+                margin-right: 8px;
+            }
+            .signature-area {
+                border: 1px solid #000;
+                background-color: #fff;
+                color: #000;
+                font-style: normal;
+            }
+            .signature-area.signed {
+                border-color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Left Spacer -->
+            <div class="left-spacer"></div>
+
+            <!-- Main Company Info -->
+            <div class="company-info">
+                <img id="companyLogo" src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 150px; height: auto;">
+                <h1 class="text-3xl font-bold text-gray-800">Safe Work Method Statement (SWMS)</h1>
+                <p class="text-gray-600">Onsite Task Hazard Identification & Control</p>
+                <div class="text-gray-700 mt-4">
+                    <input type="text" id="companyName" class="text-center text-lg font-semibold mb-1" value="GROUNDSCAN" placeholder="Your Company Name (e.g., GROUNDSCAN)">
+                    <input type="text" id="companyABN" class="text-center text-sm mb-1" value="ABN: 93 727 813 582" placeholder="ABN: XX XXX XXX XXX">
+                    <input type="text" id="companyContact" class="text-center text-sm" value="Phone: 0423407793 | Email: admin@groundscan.com.au" placeholder="Phone: XXXX XXX XXX | Email: info@yourcompany.com">
+                </div>
+            </div>
+
+            <!-- Certloc Logo -->
+            <img id="certlocLogo" src="certloc_logo.png" alt="CERTLOC Logo">
+        </div>
+
+        <div class="no-print">
+            <h2 class="section-title">Project & SWMS Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="projectName">Project Name:</label>
+                    <input type="text" id="projectName" placeholder="e.g., Blue Gum Plantation - Fence Install">
+                </div>
+                <div class="form-group">
+                    <label for="siteAddress">Site Address/Location:</label>
+                    <textarea id="siteAddress" rows="2" placeholder="e.g., Lot 123 DP 123456, Forest Road, Rockley NSW"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="swmsNumber">SWMS Number:</label>
+                    <input type="text" id="swmsNumber" placeholder="e.g., SWMS-GS-001">
+                </div>
+                <div class="form-group">
+                    <label for="swmsDate">Date Prepared/Reviewed:</label>
+                    <input type="date" id="swmsDate">
+                </div>
+                <div class="form-group">
+                    <label for="assessorName">Prepared By (Assessor Name):</label>
+                    <input type="text" id="assessorName" value="Zane Somerville" placeholder="e.g., Zane Somerville">
+                </div>
+                <div class="form-group">
+                    <label for="reviewDate">Next Review Date:</label>
+                    <input type="date" id="reviewDate">
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="taskDescription">Description of High-Risk Construction Work / Task:</label>
+                    <textarea id="taskDescription" rows="3" placeholder="e.g., Utility locating using EML and GPR, followed by hydro excavation for fence post installation."></textarea>
+                </div>
+            </div>
+
+            <h2 class="section-title">Hazard Identification, Risk Assessment & Control</h2>
+            <p class="text-sm text-gray-600 mb-4">Break down the task into steps, identify hazards, assess risks, and outline control measures.</p>
+            <div id="taskSteps">
+                <!-- Task steps will be added here -->
+            </div>
+            <button id="addTaskStepButton" class="add-button mb-6" type="button">+ Add Task Step</button>
+
+            <h2 class="section-title">Required Personal Protective Equipment (PPE)</h2>
+            <div class="checkbox-group grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-6">
+                <label><input type="checkbox" class="ppe-checkbox" value="Hard Hat"> Hard Hat</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Safety Glasses"> Safety Glasses</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Hearing Protection"> Hearing Protection</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="High-Visibility Clothing"> High-Visibility Clothing</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Safety Footwear"> Safety Footwear</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Gloves (General Purpose)"> Gloves (General Purpose)</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Gloves (Chemical Resistant)"> Gloves (Chemical Resistant)</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Sun Protection (Hat, Sunscreen)"> Sun Protection (Hat, Sunscreen)</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Respiratory Protection (Dust Mask/Respirator)"> Respiratory Protection (Dust Mask/Respirator)</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Fall Arrest Harness"> Fall Arrest Harness</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Waterproof Clothing"> Waterproof Clothing</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Arc Flash Protection"> Arc Flash Protection</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Face Shield"> Face Shield</label>
+                <label><input type="checkbox" class="ppe-checkbox" value="Other"> Other (Specify below)</label>
+            </div>
+            <div class="form-group mb-6">
+                <label for="otherPpe">Other PPE (Specify):</label>
+                <input type="text" id="otherPpe" placeholder="e.g., Chaps for chainsaw work">
+            </div>
+
+            <h2 class="section-title">Emergency Procedures</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="firstAidProcedure">First Aid Procedure:</label>
+                    <textarea id="firstAidProcedure" rows="4" placeholder="e.g., Administer first aid, call 000 if serious, notify supervisor."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fireProcedure">Fire Procedure:</label>
+                    <textarea id="fireProcedure" rows="4" placeholder="e.g., Extinguish if safe, evacuate to muster point, call 000."></textarea>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="evacuationProcedure">Evacuation Procedure & Muster Point:</label>
+                    <textarea id="evacuationProcedure" rows="4" placeholder="e.g., Follow emergency exits, proceed to designated muster point (e.g., front gate)."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyContacts">Emergency Contacts:</label>
+                    <textarea id="emergencyContacts" rows="3" placeholder="e.g., Supervisor: [Name] [Phone], First Aid Officer: [Name] [Phone]"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="hospitalDirections">Nearest Hospital/Medical Facility Directions:</label>
+                    <textarea id="hospitalDirections" rows="3" placeholder="e.g., [Hospital Name], [Address], [Approx. travel time]"></textarea>
+                </div>
+            </div>
+
+            <h2 class="section-title">Plant & Equipment</h2>
+            <p class="text-sm text-gray-600 mb-4">List all plant and equipment to be used for this task.</p>
+            <div id="plantEquipmentList">
+                <!-- Plant/Equipment entries will be added here -->
+            </div>
+            <button id="addPlantEquipmentButton" class="add-button mb-6" type="button">+ Add Plant/Equipment</button>
+
+            <h2 class="section-title">Personnel & Competency</h2>
+            <p class="text-sm text-gray-600 mb-4">List all personnel involved in the task and confirm their competency and site induction.</p>
+            <div id="personnelList">
+                <!-- Personnel entries will be added here -->
+            </div>
+            <button id="addPersonnelButton" class="add-button mb-6" type="button">+ Add Personnel</button>
+
+            <h2 class="section-title">SWMS Review & Sign-off</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="form-group">
+                    <label for="reviewerName">Reviewed By (Assessor/Supervisor Name):</label>
+                    <input type="text" id="reviewerName" value="Zane Somerville" placeholder="e.g., Zane Somerville">
+                </div>
+                <div class="form-group">
+                    <label for="reviewerSignature">Reviewer Signature:</label>
+                    <div id="reviewerSignatureArea" class="signature-area" onclick="signArea(this, 'reviewerSignatureName')">Tap to Sign</div>
+                </div>
+            </div>
+
+            <h3 class="section-title">Worker Acknowledgment</h3>
+            <p class="text-sm text-gray-600 mb-4">I have read and understand this SWMS, and agree to comply with all control measures.</p>
+            <div id="workerSignatures">
+                <!-- Worker signatures will be added here -->
+            </div>
+            <button id="addWorkerSignatureButton" class="add-button mb-6" type="button">+ Add Worker Signature</button>
+
+            <h2 class="section-title">Appendices</h2>
+            <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h3 class="report-subsection-title">Certificates</h3>
+                <p class="report-text-block">Locator Certification Number: 00004732</p>
+                <p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">
+            </div>
+
+            <button id="printSwmsButton" class="print-button no-print" type="button">Generate & Print SWMS</button>
+        </div>
+
+        <div id="reportOutput" class="report-output hidden">
+            <!-- Generated SWMS will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to add a new task step entry
+        function addTaskStep() {
+            const container = document.getElementById('taskSteps');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'task-step-entry relative';
+            const stepId = `taskStep_${Date.now()}`;
+            newEntry.id = stepId;
+
+            newEntry.innerHTML = `
+                <h3 class="report-subsection-title">Task Step <span class="step-number"></span></h3>
+                <div class="form-group mb-2">
+                    <label>Description of Task Step:</label>
+                    <textarea class="task-step-description" rows="1" placeholder="e.g., Site setup and hazard identification"></textarea>
+                </div>
+                <div class="form-group mb-2">
+                    <label>Potential Hazards:</label>
+                    <textarea class="potential-hazards" rows="2" placeholder="e.g., Underground services, Uneven ground, Traffic"></textarea>
+                </div>
+                <div class="form-group mb-2">
+                    <label>Associated Risks:</label>
+                    <textarea class="associated-risks" rows="2" placeholder="e.g., Service strike, Trip hazard, Collision"></textarea>
+                </div>
+                <div class="form-group mb-2">
+                    <label>Control Measures:</label>
+                    <textarea class="control-measures" rows="3" placeholder="e.g., Obtain BYDA, visual inspection, implement traffic management"></textarea>
+                </div>
+                <div class="form-group mb-2">
+                    <label>Responsible Person(s):</label>
+                    <input type="text" class="responsible-person" placeholder="e.g., Site Supervisor, All Personnel">
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+            updateTaskStepNumbers();
+        }
+
+        // Function to update task step numbers dynamically
+        function updateTaskStepNumbers() {
+            const stepTitles = document.querySelectorAll('#taskSteps .task-step-entry .step-number');
+            stepTitles.forEach((span, index) => {
+                span.textContent = index + 1;
+            });
+        }
+
+        // Function to add a new plant/equipment entry
+        function addPlantEquipment() {
+            const container = document.getElementById('plantEquipmentList');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'grid grid-cols-2 gap-4 mb-2 relative';
+            newEntry.innerHTML = `
+                <div class="form-group">
+                    <label>Equipment Name:</label>
+                    <input type="text" class="equipment-name" placeholder="e.g., Hydro Excavation Truck">
+                </div>
+                <div class="form-group">
+                    <label>Checks/Competency:</label>
+                    <input type="text" class="equipment-checks" placeholder="e.g., Pre-start checklist, Operator ticket">
+                </div>
+                <button class="remove-button absolute top-0 right-0 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Function to add a new personnel entry
+        function addPersonnel() {
+            const container = document.getElementById('personnelList');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'grid grid-cols-2 gap-4 mb-2 relative';
+            newEntry.innerHTML = `
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" class="personnel-name" placeholder="e.g., John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Competency/Induction:</label>
+                    <input type="text" class="personnel-competency" placeholder="e.g., White Card, Site Induction">
+                </div>
+                <button class="remove-button absolute top-0 right-0 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Function to add a new worker signature entry
+        function addWorkerSignature() {
+            const container = document.getElementById('workerSignatures');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'grid grid-cols-2 gap-4 mb-4 relative';
+            const signatureId = `workerSignature_${Date.now()}`;
+            newEntry.innerHTML = `
+                <div class="form-group">
+                    <label>Worker Name:</label>
+                    <input type="text" class="worker-name" placeholder="e.g., Jane Smith">
+                </div>
+                <div class="form-group">
+                    <label>Signature:</label>
+                    <div id="${signatureId}" class="signature-area" onclick="signArea(this)">Tap to Sign</div>
+                </div>
+                <button class="remove-button absolute top-2 right-2 remove-entry-btn" type="button">Remove</button>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Digital Signature function
+        function signArea(element, nameInputId = null) {
+            const signatureText = nameInputId ? document.getElementById(nameInputId).value : 'Signed';
+            if (signatureText) {
+                element.textContent = `Signed by: ${signatureText}`;
+                element.classList.add('signed');
+            } else {
+                element.textContent = 'Tap to Sign';
+                element.classList.remove('signed');
+            }
+        }
+
+        // Function to generate the SWMS content for printing
+        function generateSwms() {
+            const outputDiv = document.getElementById('reportOutput');
+            let swmsHtml = '';
+
+            try {
+                const companyName = document.getElementById('companyName').value || 'Your Company Name';
+                const companyABN = document.getElementById('companyABN').value || 'ABN: Not Provided';
+                const companyContact = document.getElementById('companyContact').value || 'Contact: Not Provided';
+
+                // --- Cover Page / Header ---
+                swmsHtml += `<div class="report-section text-center mb-8" style="min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">`;
+                swmsHtml += `<img src="groundscan_logo.png" alt="GROUNDSCAN Logo" class="mx-auto mb-4" style="max-width: 200px; height: auto;">`;
+                swmsHtml += `<h1 class="text-4xl font-bold text-gray-800 mb-2">Safe Work Method Statement (SWMS)</h1>`;
+                swmsHtml += `<h2 class="text-2xl text-gray-600 mb-8">Onsite Task Hazard Identification & Control</h2>`;
+                swmsHtml += `<h3 class="text-xl font-semibold text-gray-700 mb-4">${document.getElementById('projectName').value || 'Project Name Not Provided'}</h3>`;
+                swmsHtml += `<p class="text-lg text-gray-700 mb-2">${document.getElementById('siteAddress').value || 'Site Address Not Provided'}</p>`;
+                swmsHtml += `<p class="text-md text-gray-600 mb-8">Date Prepared/Reviewed: ${document.getElementById('swmsDate').value || 'N/A'}</p>`;
+                swmsHtml += `<div class="mt-auto text-gray-700 text-base">`;
+                swmsHtml += `<p>Prepared by: ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+                swmsHtml += `<p>${companyContact}</p>`;
+                swmsHtml += `</div>`;
+                swmsHtml += `<img src="certloc_logo.png" alt="CERTLOC Logo" class="absolute bottom-4 right-4" style="max-width: 80px; height: auto;">`;
+                swmsHtml += `</div>`;
+
+                // --- Project & SWMS Details ---
+                swmsHtml += `<div class="report-section">`;
+                swmsHtml += `<h2 class="report-section-title">Project & SWMS Details</h2>`;
+                swmsHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-base">`;
+                swmsHtml += `<p><strong>Project Name:</strong> ${document.getElementById('projectName').value || 'N/A'}</p>`;
+                swmsHtml += `<p><strong>SWMS Number:</strong> ${document.getElementById('swmsNumber').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="md:col-span-2"><strong>Site Address/Location:</strong> ${document.getElementById('siteAddress').value || 'N/A'}</p>`;
+                swmsHtml += `<p><strong>Date Prepared/Reviewed:</strong> ${document.getElementById('swmsDate').value || 'N/A'}</p>`;
+                swmsHtml += `<p><strong>Next Review Date:</strong> ${document.getElementById('reviewDate').value || 'N/A'}</p>`;
+                swmsHtml += `<p><strong>Prepared By (Assessor Name):</strong> ${document.getElementById('assessorName').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="md:col-span-2"><strong>Description of High-Risk Construction Work / Task:</strong> ${document.getElementById('taskDescription').value || 'N/A'}</p>`;
+                swmsHtml += `</div>`;
+                swmsHtml += `</div>`;
+
+                // --- Hazard Identification, Risk Assessment & Control ---
+                const taskSteps = document.querySelectorAll('#taskSteps .task-step-entry');
+                if (taskSteps.length > 0) {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Hazard Identification, Risk Assessment & Control</h2>`;
+                    taskSteps.forEach((entry, index) => {
+                        const description = entry.querySelector('.task-step-description').value || 'N/A';
+                        const hazards = entry.querySelector('.potential-hazards').value || 'N/A';
+                        const risks = entry.querySelector('.associated-risks').value || 'N/A';
+                        const controls = entry.querySelector('.control-measures').value || 'N/A';
+                        const responsible = entry.querySelector('.responsible-person').value || 'N/A';
+
+                        swmsHtml += `<div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">`;
+                        swmsHtml += `<h3 class="report-subsection-title">Task Step ${index + 1}: ${description}</h3>`;
+                        swmsHtml += `<p class="report-text-block"><strong>Potential Hazards:</strong> ${hazards}</p>`;
+                        swmsHtml += `<p class="report-text-block"><strong>Associated Risks:</strong> ${risks}</p>`;
+                        swmsHtml += `<p class="report-text-block"><strong>Control Measures:</strong> ${controls}</p>`;
+                        swmsHtml += `<p class="report-text-block"><strong>Responsible Person(s):</strong> ${responsible}</p>`;
+                        swmsHtml += `</div>`;
+                    });
+                    swmsHtml += `</div>`;
+                } else {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Hazard Identification, Risk Assessment & Control</h2>`;
+                    swmsHtml += `<p class="report-text-block">No task steps defined.</p>`;
+                    swmsHtml += `</div>`;
+                }
+
+                // --- Required PPE ---
+                swmsHtml += `<div class="report-section">`;
+                swmsHtml += `<h2 class="report-section-title">Required Personal Protective Equipment (PPE)</h2>`;
+                const selectedPpe = Array.from(document.querySelectorAll('.ppe-checkbox:checked')).map(cb => cb.value);
+                const otherPpe = document.getElementById('otherPpe').value;
+                if (selectedPpe.length > 0 || otherPpe) {
+                    swmsHtml += `<ul class="list-disc list-inside ml-4">`;
+                    selectedPpe.forEach(ppe => {
+                        swmsHtml += `<li class="report-list-item">${ppe}</li>`;
+                    });
+                    if (otherPpe) {
+                        swmsHtml += `<li class="report-list-item">Other: ${otherPpe}</li>`;
+                    }
+                    swmsHtml += `</ul>`;
+                } else {
+                    swmsHtml += `<p class="report-text-block">No specific PPE selected.</p>`;
+                }
+                swmsHtml += `</div>`;
+
+                // --- Emergency Procedures ---
+                swmsHtml += `<div class="report-section">`;
+                swmsHtml += `<h2 class="report-section-title">Emergency Procedures</h2>`;
+                swmsHtml += `<p class="report-text-block"><strong>First Aid Procedure:</strong> ${document.getElementById('firstAidProcedure').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="report-text-block"><strong>Fire Procedure:</strong> ${document.getElementById('fireProcedure').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="report-text-block"><strong>Evacuation Procedure & Muster Point:</strong> ${document.getElementById('evacuationProcedure').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="report-text-block"><strong>Emergency Contacts:</strong> ${document.getElementById('emergencyContacts').value || 'N/A'}</p>`;
+                swmsHtml += `<p class="report-text-block"><strong>Nearest Hospital/Medical Facility Directions:</strong> ${document.getElementById('hospitalDirections').value || 'N/A'}</p>`;
+                swmsHtml += `</div>`;
+
+                // --- Plant & Equipment ---
+                const plantEquipment = document.querySelectorAll('#plantEquipmentList > div');
+                if (plantEquipment.length > 0) {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Plant & Equipment</h2>`;
+                    plantEquipment.forEach((entry, index) => {
+                        const name = entry.querySelector('.equipment-name').value || 'N/A';
+                        const checks = entry.querySelector('.equipment-checks').value || 'N/A';
+                        swmsHtml += `<p class="report-text-block"><strong>${name}:</strong> ${checks}</p>`;
+                    });
+                    swmsHtml += `</div>`;
+                } else {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Plant & Equipment</h2>`;
+                    swmsHtml += `<p class="report-text-block">No plant or equipment listed.</p>`;
+                    swmsHtml += `</div>`;
+                }
+
+                // --- Personnel & Competency ---
+                const personnel = document.querySelectorAll('#personnelList > div');
+                if (personnel.length > 0) {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Personnel & Competency</h2>`;
+                    personnel.forEach((entry, index) => {
+                        const name = entry.querySelector('.personnel-name').value || 'N/A';
+                        const competency = entry.querySelector('.personnel-competency').value || 'N/A';
+                        swmsHtml += `<p class="report-text-block"><strong>${name}:</strong> ${competency}</p>`;
+                    });
+                    swmsHtml += `</div>`;
+                } else {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h2 class="report-section-title">Personnel & Competency</h2>`;
+                    swmsHtml += `<p class="report-text-block">No personnel listed.</p>`;
+                    swmsHtml += `</div>`;
+                }
+
+                // --- SWMS Review & Sign-off ---
+                swmsHtml += `<div class="report-section">`;
+                swmsHtml += `<h2 class="report-section-title">SWMS Review & Sign-off</h2>`;
+                swmsHtml += `<p class="report-text-block"><strong>Reviewed By (Assessor/Supervisor Name):</strong> ${document.getElementById('reviewerName').value || 'N/A'}</p>`;
+                const reviewerSignatureArea = document.getElementById('reviewerSignatureArea');
+                if (reviewerSignatureArea.classList.contains('signed')) {
+                    swmsHtml += `<p class="report-text-block"><strong>Reviewer Signature:</strong> ${reviewerSignatureArea.textContent}</p>`;
+                } else {
+                    swmsHtml += `<p class="report-text-block"><strong>Reviewer Signature:</strong> Not Signed</p>`;
+                }
+                swmsHtml += `<p class="report-text-block"><strong>Sign-off Date:</strong> ${document.getElementById('signOffDate').value || 'N/A'}</p>`;
+                swmsHtml += `</div>`;
+
+                // --- Worker Acknowledgment ---
+                const workerSignatures = document.querySelectorAll('#workerSignatures > div');
+                if (workerSignatures.length > 0) {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h3 class="report-section-title">Worker Acknowledgment</h3>`;
+                    swmsHtml += `<p class="report-text-block">I have read and understand this SWMS, and agree to comply with all control measures.</p>`;
+                    workerSignatures.forEach((entry, index) => {
+                        const workerName = entry.querySelector('.worker-name').value || 'N/A';
+                        const signatureDiv = entry.querySelector('.signature-area');
+                        const signatureText = signatureDiv.classList.contains('signed') ? signatureDiv.textContent : 'Not Signed';
+                        swmsHtml += `<p class="report-text-block"><strong>Worker ${index + 1} Name:</strong> ${workerName} | <strong>Signature:</strong> ${signatureText}</p>`;
+                    });
+                    swmsHtml += `</div>`;
+                } else {
+                    swmsHtml += `<div class="report-section">`;
+                    swmsHtml += `<h3 class="report-section-title">Worker Acknowledgment</h3>`;
+                    swmsHtml += `<p class="report-text-block">No worker acknowledgments recorded.</p>`;
+                    swmsHtml += `</div>`;
+                }
+
+                // --- Appendices (Certificate) ---
+                swmsHtml += `<div class="report-section">`;
+                swmsHtml += `<h2 class="report-section-title">Appendices</h2>`;
+                swmsHtml += `<h3 class="report-subsection-title">Certificates</h3>`;
+                swmsHtml += `<p class="report-text-block">Locator Certification Number: 00004732</p>`;
+                swmsHtml += `<p class="report-text-block">Accreditation Certificate:</p><img src="my_certloc_certificate.png" alt="Accreditation Certificate" class="mx-auto mt-2 rounded-lg max-w-full h-auto" style="max-height: 300px;">`;
+                swmsHtml += `</div>`;
+
+
+                outputDiv.innerHTML = swmsHtml;
+                outputDiv.classList.remove('hidden');
+                window.print();
+
+            } catch (error) {
+                console.error("Error generating SWMS:", error);
+                outputDiv.innerHTML = `<p class="text-red-500">An error occurred while generating the SWMS. Please check the console for details: ${error.message}</p>`;
+                outputDiv.classList.remove('hidden');
+            }
+        }
+
+        window.onload = function() {
+            // Set current dates
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('swmsDate').value = formattedDate;
+            document.getElementById('reviewDate').value = formattedDate; // Default to today, user can change
+            document.getElementById('signOffDate').value = formattedDate;
+
+            // Add initial task step (example)
+            addTaskStep();
+
+            // Add initial plant/equipment
+            addPlantEquipment();
+
+            // Add initial personnel
+            addPersonnel();
+
+            // Add initial worker signature
+            addWorkerSignature();
+
+            // Event listeners for buttons
+            document.getElementById('addTaskStepButton').addEventListener('click', addTaskStep);
+            document.getElementById('addPlantEquipmentButton').addEventListener('click', addPlantEquipment);
+            document.getElementById('addPersonnelButton').addEventListener('click', addPersonnel);
+            document.getElementById('addWorkerSignatureButton').addEventListener('click', addWorkerSignature);
+            document.getElementById('printSwmsButton').addEventListener('click', generateSwms);
+
+            // Event delegation for remove buttons
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-entry-btn')) {
+                    event.target.closest('.relative').remove(); // Target the closest parent with relative positioning
+                    updateTaskStepNumbers(); // Re-number task steps if one is removed
+                }
+            });
+
+            // Set default company name in disclaimer for initial load and update dynamically
+            const companyNameInput = document.getElementById('companyName');
+            const updateCompanyNameInHeader = function() {
+                const currentCompanyName = companyNameInput.value || companyNameInput.placeholder.replace('Your Company Name (e.g., ', '').replace(')', '');
+                // No disclaimer in SWMS, but if it were, this would update it.
+                // For now, just a placeholder function to match previous pattern.
+            };
+
+            updateCompanyNameInHeader();
+            companyNameInput.addEventListener('input', updateCompanyNameInHeader);
+        };
+    </script>
+</body>
+</html>
